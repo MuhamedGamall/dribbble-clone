@@ -1,12 +1,10 @@
-import { getServerSession } from "next-auth/next";
 import { NextAuthOptions, User } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import GoogleProvider from "next-auth/providers/google";
-import jsonwebtoken from "jsonwebtoken";
-import { JWT } from "next-auth/jwt";
 
-import { createUser, getUser } from "./actions";
-import { SessionInterface, UserProfile } from "@/types";
+import { UserProfile } from "@/types";
+import { createUser, getCurrentSession, getUser } from "./actions";
+import mongoConnect from "./mongo-connect";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,24 +13,16 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  jwt: {
-    encode: ({ secret, token }) => {
-      const encodedToken = jsonwebtoken.sign(
-        {
-          ...token,
-          iss: "grafbase",
-          exp: Math.floor(Date.now() / 1000) + 60 * 60,
-        },
-        secret
-      );
-
-      return encodedToken;
-    },
-    decode: async ({ secret, token }) => {
-      const decodedToken = jsonwebtoken.verify(token!, secret);
-      return decodedToken as JWT;
-    },
+  pages: {
+    signIn: "/",
+    error: "/error",
   },
+
+  debug: process.env.NODE_ENV === "development",
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET,
   theme: {
     colorScheme: "light",
     logo: "/logo.svg",
@@ -40,18 +30,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session }) {
       const email = session?.user?.email as string;
-
       try {
+        await mongoConnect();
         const data = (await getUser(email)) as { user?: UserProfile };
-
         const newSession = {
-          ...session,
+         ...session,
           user: {
             ...session.user,
-            ...data?.user,
+            ...data,
           },
         };
-
+        console.log(newSession);
+        
         return newSession;
       } catch (error: any) {
         console.error("Error retrieving user data: ", error.message);
@@ -60,16 +50,18 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }: { user: AdapterUser | User }) {
       try {
-        const userExists = (await getUser(user?.email as string)) as {
-          user?: UserProfile;
-        };
+        await mongoConnect();
+        if (!user.email || !user) return false;
+        const userExists = (await getUser(
+          user?.email as string
+        )) as UserProfile;
 
-        if (!userExists.user) {
-          await createUser(
-            user.name as string,
-            user.email as string,
-            user.image as string
-          );
+        if (!userExists) {
+          await createUser({
+            name: user.name || "",
+            email: user.email,
+            avatarUrl: user.image || "",
+          });
         }
 
         return true;
@@ -80,9 +72,3 @@ export const authOptions: NextAuthOptions = {
     },
   },
 };
-
-export async function getCurrentUser() {
-  const session = (await getServerSession(authOptions)) as SessionInterface;
-
-  return session;
-}

@@ -1,15 +1,17 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 
 import { NavLinks } from "@/constant";
-import { getCurrentUser } from "@/lib/session";
 
 import ProfileMenu from "./ProfileMenu";
 import Button from "./Button";
-import { signIn } from "next-auth/react";
+import { signIn, useSession, signOut } from "next-auth/react";
+import { getCurrentSession } from "@/lib/actions";
 
-const Navbar = async () => {
-  const session = await getCurrentUser();
+const Navbar = () => {
+  const session = useSession();
+  console.log(session);
 
   return (
     <nav className="flexBetween navbar">
@@ -27,9 +29,9 @@ const Navbar = async () => {
       </div>
 
       <div className="flexCenter gap-4">
-        {session?.user ? (
+        {session.status === "authenticated" ? (
           <>
-            <ProfileMenu session={session} />
+            <ProfileMenu session={session.data.user} />
 
             <Link href="/create-project">
               <Button title="Share work" />
@@ -38,7 +40,9 @@ const Navbar = async () => {
         ) : (
           <Button
             title="Sign In"
-            handleClick={() => signIn("google", { callbackUrl: "/" })}
+            handleClick={async () =>
+              await signIn("google", { callbackUrl: "/" })
+            }
           />
         )}
       </div>

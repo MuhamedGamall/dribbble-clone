@@ -1,6 +1,7 @@
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import AuthSessionProvider from "@/components/providers/SessionProvder";
 
 export const metadata = {
   title: "Flexibble",
@@ -15,9 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <AuthSessionProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </AuthSessionProvider>
       </body>
     </html>
   );

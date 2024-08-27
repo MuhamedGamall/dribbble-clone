@@ -11,22 +11,22 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
+import { Session } from "next-auth";
+import { UserProfile } from "@/types";
 
-import { SessionInterface } from "@/types";
-
-const ProfileMenu = ({ session }: { session: SessionInterface }) => {
+const ProfileMenu = ({ session }: { session: Session | any }) => {
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <div className="flexCenter z-10 flex-col relative">
+    <div className="flexCenter z-10 flex-col relative ">
       <Menu as="div">
         <MenuButton
-          className="flexCenter"
+          className="flexCenter  bg-transparent"
           onMouseEnter={() => setOpenModal(true)}
         >
-          {session?.user?.image && (
+          {session?.image && (
             <Image
-              src={session.user.image}
+              src={session?.image}
               width={40}
               height={40}
               className="rounded-full"
@@ -50,45 +50,22 @@ const ProfileMenu = ({ session }: { session: SessionInterface }) => {
             className="flexStart profile_menu-items"
             onMouseLeave={() => setOpenModal(false)}
           >
-            <div className="flex flex-col items-center gap-y-4">
-              {session?.user?.image && (
+            <Link
+              href={`/profile/${session?._id}`}
+              className="flex flex-col items-center gap-y-2"
+            >
+              {session?.image && (
                 <Image
-                  src={session?.user?.image}
+                  src={session?.image}
                   className="rounded-full"
                   width={80}
                   height={80}
                   alt="profile Image"
                 />
               )}
-              <p className="font-semibold">{session?.user?.name}</p>
-            </div>
+              <p className="font-semibold md:text-2xl capitalize">{session?.name}</p>
+            </Link>
 
-            <div className="flex flex-col gap-3 pt-10 items-start w-full">
-              <MenuItem>
-                <Link
-                  href={`/profile/${session?.user?.id}`}
-                  className="text-sm"
-                >
-                  Work Preferences
-                </Link>
-              </MenuItem>
-              <MenuItem>
-                <Link
-                  href={`/profile/${session?.user?.id}`}
-                  className="text-sm"
-                >
-                  Settings
-                </Link>
-              </MenuItem>
-              <MenuItem>
-                <Link
-                  href={`/profile/${session?.user?.id}`}
-                  className="text-sm"
-                >
-                  Profile
-                </Link>
-              </MenuItem>
-            </div>
             <div className="w-full flexStart border-t border-nav-border mt-5 pt-5">
               <MenuItem>
                 <button
