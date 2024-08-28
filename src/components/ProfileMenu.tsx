@@ -1,29 +1,22 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { signOut } from "next-auth/react";
-import { Fragment, useState } from "react";
 import {
-  Menu,
-  MenuItem,
-  MenuButton,
-  MenuItems,
-  Transition,
-} from "@headlessui/react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+
 import { Session } from "next-auth";
-import { UserProfile } from "@/types";
 
 const ProfileMenu = ({ session }: { session: Session | any }) => {
-  const [openModal, setOpenModal] = useState(false);
-
   return (
     <div className="flexCenter z-10 flex-col relative ">
-      <Menu as="div">
-        <MenuButton
-          className="flexCenter  bg-transparent"
-          onMouseEnter={() => setOpenModal(true)}
-        >
+      <DropdownMenu>
+        <DropdownMenuTrigger>
           {session?.image && (
             <Image
               src={session?.image}
@@ -33,26 +26,12 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
               alt="user profile image"
             />
           )}
-        </MenuButton>
-
-        <Transition
-          show={openModal}
-          as={Fragment}
-          enter="transition ease-out duration-200"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <MenuItems
-            static
-            className="flexStart profile_menu-items"
-            onMouseLeave={() => setOpenModal(false)}
-          >
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <div className="">
             <Link
               href={`/profile/${session?._id}`}
-              className="flex flex-col items-center gap-y-2"
+              className="flex flex-col items-center gap-y-2 p-5"
             >
               {session?.image && (
                 <Image
@@ -63,23 +42,21 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
                   alt="profile Image"
                 />
               )}
-              <p className="font-semibold md:text-2xl capitalize">{session?.name}</p>
+              <p className="font-semibold md:text-2xl capitalize">
+                {session?.name}
+              </p>
             </Link>
-
-            <div className="w-full flexStart border-t border-nav-border mt-5 pt-5">
-              <MenuItem>
-                <button
-                  type="button"
-                  className="text-sm"
-                  onClick={() => signOut()}
-                >
-                  Sign out
-                </button>
-              </MenuItem>
-            </div>
-          </MenuItems>
-        </Transition>
-      </Menu>
+            <DropdownMenuSeparator />
+            <button
+              type="button"
+              className="text-sm font-bold text-primary/50 text-center w-full pt-3 p-2"
+              onClick={() => signOut()}
+            >
+              Sign out
+            </button>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };

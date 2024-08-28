@@ -1,9 +1,0 @@
-extend schema
-  @auth(
-    rules: [
-      { allow: private }
-    ]
-  )
-
-extend schema @introspection(enable: true)
-

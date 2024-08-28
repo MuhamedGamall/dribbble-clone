@@ -1,9 +1,8 @@
-import { NextAuthOptions, User } from "next-auth";
-import { AdapterUser } from "next-auth/adapters";
+import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 import { UserProfile } from "@/types";
-import { createUser, getCurrentSession, getUser } from "./actions";
+import { createUser, getUser } from "./actions";
 import mongoConnect from "./mongo-connect";
 
 export const authOptions: NextAuthOptions = {
@@ -48,6 +47,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       try {
         await mongoConnect();
+
         if (!user.email || !user) return false;
         const userExists = (await getUser(
           user?.email as string

@@ -1,8 +1,15 @@
+import Container from "@/components/Container";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import AuthSessionProvider from "@/components/providers/SessionProvder";
-import { getCurrentSession } from "@/lib/actions";
+import { Plus_Jakarta_Sans as FontSans } from "next/font/google";
+import { Toaster } from "sonner";
+const fontSans = FontSans({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-sans",
+});
 
 export const metadata = {
   title: "Flexibble",
@@ -14,13 +21,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = getCurrentSession()
   return (
     <html lang="en">
-      <body>
+      <body className={fontSans.className}>
         <AuthSessionProvider>
           <Navbar />
-          <main>{children}</main>
+          <Container>
+            <Toaster duration={3000} />
+            <main>{children}</main>
+          </Container>
           <Footer />
         </AuthSessionProvider>
       </body>

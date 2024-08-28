@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import Image from "next/image";
 import { MouseEventHandler } from "react";
 
@@ -11,6 +11,9 @@ type Props = {
   type?: "button" | "submit";
   bgColor?: string;
   textColor?: string;
+  iconWidth?: number;
+
+  className?: string;
 };
 
 const Button = ({
@@ -20,25 +23,41 @@ const Button = ({
   handleClick,
   submitting,
   type,
+  iconWidth,
+  className,
   bgColor,
   textColor,
 }: Props) => (
   <button
     type={type || "button"}
     disabled={submitting || false}
-    className={`flexCenter gap-3 px-4 py-3 
+    className={`flexCenter gap-3 text-[15px] px-4 py-3 
         ${textColor ? textColor : "text-white"} 
         ${
-          submitting ? "opacity-50" : bgColor ? bgColor : "bg-primary-purple"
-        } rounded-xl text-sm font-medium max-md:w-full`}
+          submitting
+            ? " bg-primary-purple/50"
+            : bgColor
+            ? bgColor
+            : "bg-primary-purple"
+        } rounded-[5px] text-sm font-medium md:w-full ${className}`}
     onClick={handleClick}
   >
     {leftIcon && (
-      <Image src={leftIcon} width={14} height={14} alt="left icon" />
+      <Image
+        src={leftIcon}
+        width={iconWidth || 14}
+        height={iconWidth || 14}
+        alt="left icon"
+      />
     )}
     {title}
     {rightIcon && (
-      <Image src={rightIcon} width={14} height={14} alt="right icon" />
+      <Image
+        src={rightIcon}
+        width={iconWidth || 14}
+        height={iconWidth || 14}
+        alt="right icon"
+      />
     )}
   </button>
 );
