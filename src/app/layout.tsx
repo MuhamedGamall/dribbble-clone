@@ -2,6 +2,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import AuthSessionProvider from "@/components/providers/SessionProvder";
+import { getCurrentSession } from "@/lib/actions";
 
 export const metadata = {
   title: "Flexibble",
@@ -13,6 +14,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = getCurrentSession()
   return (
     <html lang="en">
       <body>

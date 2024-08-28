@@ -1,4 +1,4 @@
-// 'use server'
+"use server";
 import { User } from "@/models/user";
 import { getServerSession } from "next-auth";
 import mongoConnect from "./mongo-connect";
@@ -37,6 +37,7 @@ export const createUser = async (userData: {
     return create;
   } catch (error: any) {
     console.log("[CREATE_USER]", error.message);
+    throw error;
   }
 };
 
@@ -47,10 +48,16 @@ export const getUser = async (email: string) => {
     if (!email) {
       throw new Error("No user email provided");
     }
+
     const user = await User.findOne({ email }).lean();
 
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     return user;
-  } catch (error) {
-    throw new Error("Something went wrong, when getting user");
+  } catch (error: any) {
+    console.error("[GET_USER] Error fetching user:", error.message);
+    throw error;
   }
 };

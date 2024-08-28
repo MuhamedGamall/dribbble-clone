@@ -13,10 +13,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  pages: {
-    signIn: "/",
-    error: "/error",
-  },
+  // pages: {
+  //   error: "/error",
+  // },
 
   debug: process.env.NODE_ENV === "development",
   session: {
@@ -34,21 +33,19 @@ export const authOptions: NextAuthOptions = {
         await mongoConnect();
         const data = (await getUser(email)) as { user?: UserProfile };
         const newSession = {
-         ...session,
+          ...session,
           user: {
             ...session.user,
             ...data,
           },
         };
-        console.log(newSession);
-        
         return newSession;
       } catch (error: any) {
         console.error("Error retrieving user data: ", error.message);
         return session;
       }
     },
-    async signIn({ user }: { user: AdapterUser | User }) {
+    async signIn({ user }) {
       try {
         await mongoConnect();
         if (!user.email || !user) return false;

@@ -11,8 +11,6 @@ import { getCurrentSession } from "@/lib/actions";
 
 const Navbar = () => {
   const session = useSession();
-  console.log(session);
-
   return (
     <nav className="flexBetween navbar">
       <div className="flex-1 flexStart gap-10">
@@ -39,10 +37,11 @@ const Navbar = () => {
           </>
         ) : (
           <Button
-            title="Sign In"
+            title={session.status === "loading" ? "Loading..." : "Sign In"}
             handleClick={async () =>
               await signIn("google", { callbackUrl: "/" })
             }
+            submitting={session.status === "loading"}
           />
         )}
       </div>

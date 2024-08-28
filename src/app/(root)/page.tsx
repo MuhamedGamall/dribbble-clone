@@ -1,5 +1,4 @@
 import { ProjectInterface } from "@/types";
-import { fetchAllProjects } from "@/lib/actions";
 
 type SearchParams = {
   category?: string | null;
