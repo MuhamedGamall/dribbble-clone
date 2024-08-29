@@ -186,13 +186,25 @@ export const updateProject = async ({
   }
 };
 
-export const fetchProjects = async ({ category }: { category?: string }) => {
+export const fetchProjects = async ({
+  searchQuery,
+}: {
+  searchQuery?: string;
+}) => {
   try {
     await mongoConnect();
-
-    const projects = await Project.find({
-      ...(category && { category }),
-    });
+    let filter = {};
+    if (searchQuery) {
+      const regex = new RegExp(searchQuery, "i");
+      filter = {
+        $or: [
+          { title: { $regex: regex } },
+          { category: { $regex: regex } },
+          { "creator.name": { $regex: regex } },
+        ],
+      };
+    }
+    const projects = await Project.find(filter)
 
     return parseStringify(projects) as ProjectInterface[];
   } catch (error: any) {
@@ -234,7 +246,7 @@ export const deleteProject = async (id: string) => {
       "creator.email": session?.user?.email,
       "creator._id": session?.user?._id,
     });
-console.log(findProject);
+    console.log(findProject);
 
     if (!findProject) throw new Error("Project not found");
 

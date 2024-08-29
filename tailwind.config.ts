@@ -26,6 +26,7 @@ const config = {
       },
       boxShadow: {
         menu: "0px 159px 95px rgba(13,12,34,0.01), 0px 71px 71px rgba(13,12,34,0.02), 0px 18px 39px rgba(13,12,34,0.02), 0px 0px 0px rgba(13,12,34,0.02)",
+        searchBar:"0px 8px 20px rgba(0,0,0,0.06)" 
       },
       colors: {
         "nav-border": "#EBEAEA",
