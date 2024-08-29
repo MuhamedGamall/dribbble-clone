@@ -12,16 +12,17 @@ export type FormState = {
 export interface ProjectInterface {
   title: string;
   description: string;
-  image: string;
-  ProjectUrl: string;
+  posterUrl: string;
+  posterId: string;
+  projectUrl: string;
   githubUrl: string;
   category: string;
   _id: string;
-  createdBy: {
+  creator: {
     name: string;
     email: string;
     avatarUrl: string;
-    id: string;
+    _id: string;
   };
 }
 
@@ -43,8 +44,6 @@ export interface UserProfile {
     };
   };
 }
-
-
 
 export interface ProjectForm {
   title: string;

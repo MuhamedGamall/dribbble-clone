@@ -7,14 +7,12 @@ body,
   height: 100%;
 }
 
-
-
 @layer utilities {
   .flexCenter {
     @apply flex justify-center items-center;
   }
   .shad-input {
-    @apply  h-11 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
+    @apply h-11 focus-visible:ring-0 focus-visible:ring-offset-0 !important;
   }
 
   .flexBetween {
@@ -24,7 +22,7 @@ body,
   .flexStart {
     @apply flex items-center justify-start;
   }
- 
+
   .text-small {
     @apply text-sm font-medium;
   }
@@ -39,14 +37,14 @@ body,
   .no-result-text {
     @apply w-full text-center my-10 px-2;
   }
- /* ==== File Upload */
- .file-upload {
-  @apply text-[12px] flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed p-5;
-}
+  /* ==== File Upload */
+  .file-upload {
+    @apply text-[12px] flex cursor-pointer  flex-col items-center justify-center gap-3 rounded-md border border-dashed p-5;
+  }
 
-.file-upload_label {
-  @apply flex flex-col justify-center gap-2 text-center;
-}
+  .file-upload_label {
+    @apply flex flex-col justify-center gap-2 text-center;
+  }
   /* Project Details */
   .user-actions_section {
     @apply fixed max-md:hidden flex gap-4 flex-col right-10 top-20;
@@ -54,11 +52,6 @@ body,
 
   .user-info {
     @apply flex flex-wrap whitespace-nowrap text-sm font-normal gap-2 w-full;
-  }
-
-  /* Home */
-  .projects-grid {
-    @apply grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-10 mt-10 w-full;
   }
 
   /* Project Actions */
@@ -69,7 +62,9 @@ body,
   .delete-action_btn {
     @apply p-3 text-gray-100 hover:bg-red-600 rounded-lg text-sm font-medium;
   }
-
+  .favorite-action_btn {
+    @apply p-3  bg-slate-500 rounded-lg text-sm font-medium;
+  }
   /* Related Project Card */
   .related_project-card {
     @apply flex-col rounded-2xl min-w-[210px] min-h-[197px];
@@ -158,6 +153,16 @@ body,
   /* Profile Projects */
   .profile_projects {
     @apply grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8 mt-5;
+  }
+}
+.projects-grid {
+  display: grid;
+  grid-gap: 36px;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+}
+@media (min-width: 1600px) {
+  .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(336px, 1fr));
   }
 }
 @layer base {

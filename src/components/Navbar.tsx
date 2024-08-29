@@ -4,11 +4,10 @@ import Link from "next/link";
 
 import { NavLinks } from "@/constant";
 
-import ProfileMenu from "./ProfileMenu";
+import { signIn, useSession } from "next-auth/react";
 import Button from "./Button";
-import { signIn, useSession, signOut } from "next-auth/react";
-import { getCurrentSession } from "@/lib/actions";
 import Container from "./Container";
+import ProfileMenu from "./ProfileMenu";
 
 const Navbar = () => {
   const session = useSession();

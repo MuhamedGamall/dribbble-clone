@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form, FormControl } from "@/components/ui/form";
 import { z } from "zod";
@@ -12,11 +12,12 @@ import { categoryFilters } from "@/constant";
 import { toast } from "sonner";
 import Button from "@/components/Button";
 import { SelectItem } from "@/components/ui/select";
-import { createProject } from "@/lib/actions";
+import { createProject, updateProject } from "@/lib/actions";
 import { useSession } from "next-auth/react";
-import { UserProfile } from "@/types";
+import { ProjectInterface, UserProfile } from "@/types";
 import { Session } from "next-auth";
-
+const strictUrlPattern =
+  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 export const ProjectSchema = z.object({
   title: z
     .string()
@@ -28,43 +29,72 @@ export const ProjectSchema = z.object({
     .trim()
     .max(500, { message: "Description must be less than 500 characters" }),
   image: z
-    .any()
+    .string()
     .refine((value) => value !== "", { message: "Please upload image" }),
 
-  projectUrl: z.string().trim(),
-  githubUrl: z.string().trim(),
+  projectUrl: z.string().trim().url("Invalid URL").optional().or(z.literal("")),
+
+  githubUrl: z.string().trim().url("Invalid URL").optional().or(z.literal("")),
   category: z
     .string()
     .trim()
     .refine((value) => value !== "", { message: "Please select category" }),
 });
 
-export default function ProjectForm({ type }: { type: "create" | "update" }) {
+export default function ProjectForm({
+  type,
+  project,
+}: {
+  type: "create" | "update";
+  project?: ProjectInterface;
+}) {
   const router = useRouter();
-  const session = useSession() as any;
   const form = useForm<z.infer<typeof ProjectSchema>>({
     resolver: zodResolver(ProjectSchema),
     defaultValues: {
       title: "",
       description: "",
-      image: null,
+      image: "",
       projectUrl: "",
       githubUrl: "",
       category: "",
     },
   });
+
+  useEffect(() => {
+    if (type === "update" && project) {
+      form.reset({
+        title: project.title,
+        description: project.description,
+        image: project.posterUrl,
+        projectUrl: project.projectUrl,
+        githubUrl: project.githubUrl,
+        category: project.category,
+      });
+    }
+  }, [project, type, form]);
+
   const onSubmit = async (values: z.infer<typeof ProjectSchema>) => {
     try {
       if (type === "create") {
         await createProject({
           data: values,
-          creatorId: session?.data?.user?._id,
-        }).then(() => router.push("/"));
+        }).then(() => {
+          router.replace("/");
+          router.refresh();
+        });
       }
 
-      if (type === "update") {
-        // await updateProject(form, project?.id as string, token);
-        router.push("/");
+      if (type === "update" && project) {
+        const updatedProject = await updateProject({
+          data: values,
+          projectId: project?._id,
+          posterId: project?.posterId,
+        }).then(() => {
+          router.replace("/");
+          router.refresh();
+        }) as any
+        form.setValue("image", updatedProject.posterUrl) ;
       }
     } catch (error) {
       console.error(error);
@@ -81,7 +111,7 @@ export default function ProjectForm({ type }: { type: "create" | "update" }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="max-w-[800px] mx-auto space-y-6"
+        className="max-w-[800px] mx-auto space-y-6 "
       >
         <CustomFormField
           fieldType={FormFieldType.SKELETON}
@@ -125,7 +155,7 @@ export default function ProjectForm({ type }: { type: "create" | "update" }) {
           fieldType={FormFieldType.INPUT}
           control={form.control}
           disabled={form.formState.isSubmitting}
-          name="gethubUrl"
+          name="githubUrl"
           label="Github Url"
           placeholder="https://github.com/example"
         />
@@ -136,6 +166,7 @@ export default function ProjectForm({ type }: { type: "create" | "update" }) {
           disabled={form.formState.isSubmitting}
           label="Category"
           placeholder="category"
+          defaultValue={project?.category || ""}
           children={categoryFilters.map((cate, i) => (
             <SelectItem key={cate + i} value={cate}>
               {cate}
@@ -151,7 +182,13 @@ export default function ProjectForm({ type }: { type: "create" | "update" }) {
                 : `${type === "create" ? "Create" : "Update"} Project`
             }
             type="submit"
-            leftIcon={form.formState.isSubmitting ? "" : "/plus.svg"}
+            leftIcon={
+              form.formState.isSubmitting
+                ? ""
+                : type === "create"
+                ? "/plus.svg"
+                : ""
+            }
             submitting={form.formState.isSubmitting}
           />
         </div>

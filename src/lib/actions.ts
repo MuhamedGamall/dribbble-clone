@@ -1,7 +1,7 @@
 "use server";
 import { ProjectSchema } from "@/app/(routes)/_components/ProjectForm";
-import { Project } from "@/models/project";
-import { User } from "@/models/user";
+import Project from "@/models/project";
+import User from "@/models/user";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
@@ -9,6 +9,9 @@ import mongoConnect from "./mongo-connect";
 import { authOptions } from "./session";
 import axios from "axios";
 import { parseStringify } from "./utils";
+import { headers } from "next/headers";
+import { ProjectInterface } from "@/types";
+import { Session } from "inspector";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 cloudinary.config({
@@ -19,7 +22,7 @@ cloudinary.config({
 
 export async function getCurrentSession() {
   const session = await getServerSession(authOptions);
-  return session;
+  return session as any;
 }
 export const createUser = async (userData: {
   name: string;
@@ -63,49 +66,25 @@ export const getUser = async (email: string) => {
     throw error;
   }
 };
-export async function uploadImage(image: string) {
-  try {
-    if (!image) {
-      throw new Error("Image path is required");
-    }
-    const options = {
-      use_filename: true,
-      unique_filename: false,
-      overwrite: true,
-      transformation: [{ width: 1000, height: 752, crop: "scale" }],
-    };
 
-    const result = await cloudinary.uploader.upload(
-      JSON.stringify(image),
-      options
-    );
-    // const result = await axios.post(`${appUrl}/api/cloudinary`, image);
-
-    return result;
-  } catch (error: any) {
-    console.log("Failed to upload image on Cloudinary", error.message);
-    throw error;
-  }
-}
 export const createProject = async ({
   data,
-  creatorId,
 }: {
   data: z.infer<typeof ProjectSchema>;
-  creatorId: string;
 }) => {
   try {
-    // const currentSession = await getCurrentSession();
-
-    // if (!currentSession) throw new Error("Unauthorized");
+    const session = await getCurrentSession();
+    if (!session) throw new Error("Unauthorized");
+    const creatorId = session?.user?._id;
 
     await mongoConnect();
+
     const image = (
-      await axios.post(`${appUrl}/api/cloudinary`, JSON.stringify(data.image))
+      await axios.post(`${appUrl}/api/cloudinary`, {
+        session,
+        image: data.image,
+      })
     ).data;
-
-    console.log({ image });
-
     const posterUrl = image?.url;
     const posterId = image?.public_id;
     if (!image)
@@ -121,11 +100,155 @@ export const createProject = async ({
       ...data,
       posterId,
       posterUrl,
-      createdBy: creator._id,
+      creator: {
+        _id: creator._id,
+        name: creator.name,
+        email: creator.email,
+        avatarUrl: creator.avatarUrl,
+      },
     });
-    return parseStringify(newProject);
+
+    return parseStringify(newProject) as ProjectInterface;
   } catch (error: any) {
     console.error("Error creating project:", error.message);
+    throw error;
+  }
+};
+function isBase64DataURL(value: string) {
+  const base64Regex = /^data:image\/[a-z]+;base64,/;
+  return base64Regex.test(value);
+}
+export const updateProject = async ({
+  data,
+  projectId,
+  posterId: posterIdForDelete,
+}: {
+  data: z.infer<typeof ProjectSchema>;
+  projectId: string;
+  posterId: string;
+}) => {
+  try {
+    const session = await getCurrentSession();
+    if (!session) throw new Error("Unauthorized");
+    const creatorId = session?.user?._id;
+
+    await mongoConnect();
+
+    if (!creatorId) throw new Error("Creator Id not found");
+
+    const creator = await User.findById(creatorId);
+
+    if (!creator) throw new Error("Creator not found");
+
+    const findProject = async () =>
+      await Project.findOne({
+        _id: projectId,
+        "creator._id": creatorId,
+        "creator.email": creator.email,
+      });
+
+    if (!(await findProject())) throw new Error("Project not found");
+
+    let updatedData = data as any;
+    const isUploadingNewImage = isBase64DataURL(data.image);
+    if (isUploadingNewImage) {
+      const image = (
+        await axios.put(`${appUrl}/api/cloudinary`, {
+          session,
+          image: data.image,
+          deleteImageId: posterIdForDelete,
+        })
+      ).data;
+      if (image) {
+        updatedData.image;
+      } else {
+        throw new Error("Failed to upload image before updating project");
+      }
+      updatedData.posterUrl = image?.url;
+      updatedData.posterId = image?.public_id;
+    }
+
+    await Project.updateOne(
+      {
+        _id: projectId,
+        "creator._id": creatorId,
+        "creator.email": creator.email,
+      },
+      {
+        ...data,
+      }
+    );
+    const project = await findProject();
+    return parseStringify(project) as ProjectInterface;
+  } catch (error: any) {
+    console.error("Error creating project:", error.message);
+    throw error;
+  }
+};
+
+export const fetchProjects = async ({ category }: { category?: string }) => {
+  try {
+    await mongoConnect();
+
+    const projects = await Project.find({
+      ...(category && { category }),
+    });
+
+    return parseStringify(projects) as ProjectInterface[];
+  } catch (error: any) {
+    console.error("Error fetching projects:", error.message);
+    throw error;
+  }
+};
+export const getProject = async (id: string) => {
+  try {
+    const session = await getCurrentSession();
+    if (!session) throw new Error("Unauthorized");
+
+    await mongoConnect();
+
+    const project = await Project.findById(id);
+
+    if (!project) throw new Error("Project not found");
+
+    return parseStringify(project) as ProjectInterface;
+  } catch (error: any) {
+    console.error("Error fetching project:", error.message);
+    throw error;
+  }
+};
+export const deleteProject = async (id: string) => {
+  try {
+    const session = await getCurrentSession();
+
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
+    console.log({
+      _id: id,
+      "creator.email": session?.user?.email,
+      "creator._id": session?.user?._id,
+    });
+
+    const findProject = await Project.findOne({
+      _id: id,
+      "creator.email": session?.user?.email,
+      "creator._id": session?.user?._id,
+    });
+console.log(findProject);
+
+    if (!findProject) throw new Error("Project not found");
+
+    const project = await Project.deleteOne({
+      _id: id,
+      "creator.email": session?.user?.email,
+      "creator._id": session?.user?._id,
+    });
+
+    await axios.delete(`${appUrl}/api/cloudinary?id=${findProject.posterId}`);
+
+    return parseStringify(project);
+  } catch (error: any) {
+    console.error("Error deleting project:", error.message);
     throw error;
   }
 };

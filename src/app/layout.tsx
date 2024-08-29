@@ -26,10 +26,9 @@ export default function RootLayout({
       <body className={fontSans.className}>
         <AuthSessionProvider>
           <Navbar />
-          <Container>
-            <Toaster duration={3000} />
-            <main>{children}</main>
-          </Container>
+          <Toaster duration={3000} />
+          <main>{children}</main>
+
           <Footer />
         </AuthSessionProvider>
       </body>

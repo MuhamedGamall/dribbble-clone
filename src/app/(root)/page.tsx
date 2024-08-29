@@ -1,3 +1,6 @@
+import EmptyState from "@/components/EmptyState";
+import ProjectCard from "@/components/ProjectCard";
+import { fetchProjects } from "@/lib/actions";
 import { ProjectInterface } from "@/types";
 
 type SearchParams = {
@@ -9,44 +12,39 @@ type Props = {
   searchParams: SearchParams;
 };
 
-
-
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 export const revalidate = 0;
 
-const Home = async ({ searchParams: { category, endcursor } }: Props) => {
-  // const data = await fetchAllProjects(category, endcursor) as ProjectSearch
+const Home = async ({ searchParams: { category } }: Props) => {
+  const data = await fetchProjects({});
 
-  // const projectsToDisplay = data?.projectSearch?.edges || [];
-
-  // if (projectsToDisplay.length === 0) {
-  //   return (
-  //     <section className="flexStart flex-col paddings">
-  //       <Categories />
-
-  //       <p className="no-result-text text-center">No projects found, go create some first.</p>
-  //     </section>
-  //   )
-  // }
+  if (data?.length === 0) {
+    return (
+      <section className="flexStart flex-col paddings">
+        {/* <Categories /> */}
+        <EmptyState showCreateButton />
+      </section>
+    );
+  }
 
   return (
-    <section className="flexStart flex-col paddings mb-16">
+    <section className="flexStart flex-col paddings mb-16 ">
       {/* <Categories /> */}
 
-      {/* <section className="projects-grid">
-        {projectsToDisplay.map(({ node }: { node: ProjectInterface }) => (
+      <section className="projects-grid  w-full">
+        {data?.map((project: ProjectInterface) => (
           <ProjectCard
-            key={`${node?.id}`}
-            id={node?.id}
-            image={node?.image}
-            title={node?.title}
-            name={node?.createdBy.name}
-            avatarUrl={node?.createdBy.avatarUrl}
-            userId={node?.createdBy.id}
+            key={`${project?._id}`}
+            id={project?._id}
+            posterUrl={project?.posterUrl}
+            title={project?.title}
+            name={project?.creator?.name}
+            avatarUrl={project?.creator?.avatarUrl}
+            userId={project?.creator?._id}
           />
         ))}
-      </section> */}
+      </section>
 
       {/* <LoadMore 
         startCursor={data?.projectSearch?.pageInfo?.startCursor} 

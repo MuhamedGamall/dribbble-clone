@@ -1,19 +1,27 @@
 import mongoose, { model, models } from "mongoose";
 
+const CreatorSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+  name: { type: String, trim: true },
+  email: { type: String, required: true, lowercase: true },
+  avatarUrl: { type: String, required: true },
+});
 const ProjectSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, minlength: 3, maxlength: 100 },
-    description: { type: String, required: true },
-    posterUrl: { type: String, required: true },
-    posterId: { type: String, required: true },
-    projectUrl: { type: String },
-    githubUrl: { type: String },
-    category: { type: String, required: true, index: true },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    title: {
+      type: String,
       required: true,
+      minlength: 3,
+      maxlength: 100,
+      trim: true,
     },
+    description: { type: String, required: true, trim: true },
+    posterUrl: { type: String, required: true, trim: true },
+    posterId: { type: String, required: true, trim: true },
+    projectUrl: { type: String, trim: true },
+    githubUrl: { type: String, trim: true },
+    category: { type: String, required: true, trim: true, index: true },
+    creator: { type: CreatorSchema, required: true },
   },
   { timestamps: true }
 );
@@ -22,4 +30,5 @@ ProjectSchema.methods.publicRead = function () {
   return this.toObject();
 };
 
-export const Project = models?.Project || model<any>("Project", ProjectSchema);
+const Project = models.Project || model("Project", ProjectSchema);
+export default Project;
