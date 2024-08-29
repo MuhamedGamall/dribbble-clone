@@ -38,7 +38,7 @@ const ProjectCard = ({
           src={posterUrl}
           width={414}
           height={314}
-          className="w-full aspect-[5/4]  h-full object-cover rounded-2xl"
+          className="w-full aspect-[5/4.5]  h-full object-cover rounded-2xl"
           alt="project image"
         />
 
