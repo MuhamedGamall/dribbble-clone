@@ -21,6 +21,8 @@ const ProjectSchema = new mongoose.Schema(
     projectUrl: { type: String, trim: true },
     githubUrl: { type: String, trim: true },
     category: { type: String, required: true, trim: true, index: true },
+    viewership: { type: Number, default: 0 },
+    likesCount: { type: Number, default: 0 },
     creator: { type: CreatorSchema, required: true },
   },
   { timestamps: true }

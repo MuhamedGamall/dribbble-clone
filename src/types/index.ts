@@ -12,10 +12,12 @@ export type FormState = {
 export interface ProjectInterface {
   title: string;
   description: string;
+  likesCount: number;
   posterUrl: string;
   posterId: string;
   projectUrl: string;
   githubUrl: string;
+  isFavorite: boolean;
   category: string;
   _id: string;
   creator: {

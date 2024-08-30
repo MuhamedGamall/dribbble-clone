@@ -10,6 +10,8 @@ import { z } from "zod";
 import mongoConnect from "./mongo-connect";
 import { authOptions } from "./session";
 import { parseStringify } from "./utils";
+import mongoose from "mongoose";
+import { revalidatePath } from "next/cache";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 cloudinary.config({
@@ -195,6 +197,8 @@ export const fetchProjects = async ({
 }) => {
   try {
     await mongoConnect();
+    const session = await getCurrentSession();
+    const favoritesIds = session?.user?.favorites;
     let filter = {};
     let isLoading = true;
 
@@ -208,7 +212,15 @@ export const fetchProjects = async ({
         ],
       };
     }
-    const projects = await Project.find(filter);
+
+    const projects = await Project.aggregate([
+      { $match: filter },
+      {
+        $addFields: {
+          isFavorite: { $in: ["$_id", favoritesIds || []] },
+        },
+      },
+    ]);
     isLoading = false;
     return {
       projects: parseStringify(projects),
@@ -219,7 +231,7 @@ export const fetchProjects = async ({
     throw error;
   }
 };
-export const getProject = async (id: string) => {
+export const getProject = async (id: string, pathname: string) => {
   try {
     let isLoading = true;
     const session = await getCurrentSession();
@@ -227,9 +239,19 @@ export const getProject = async (id: string) => {
 
     await mongoConnect();
 
-    const project = await Project.findById(id);
+    let project = await Project.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $addFields: {
+          isFavorite: { $in: ["$_id", session?.user?.favorites || []] },
+        },
+      },
+    ]);
 
+    project = project[0];
     if (!project) throw new Error("Project not found");
+    if (pathname) revalidatePath(pathname, "page");
+
     isLoading = false;
     return {
       project: parseStringify(project),
@@ -259,10 +281,27 @@ export const getUserProjects = async ({
     if (!userId) throw new Error("userId  not found");
     if (!projectIdForIgnore) throw new Error("projectIdForIgnore not found");
 
-    const projects = await Project.find({
-      _id: { $ne: projectIdForIgnore, $in: projectsIds },
-      "creator._id": userId,
-    });
+    const projects = await Project.aggregate([
+      {
+        $match: {
+          _id: {
+            $ne: new mongoose.Types.ObjectId(projectIdForIgnore),
+            $in: projectsIds,
+          },
+          "creator._id": new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $addFields: {
+          isFavorite: { $in: ["$_id", session?.user?.favorites || []] },
+        },
+      },
+    ]);
+
+    // .find({
+    //   _id: { $ne: projectIdForIgnore, $in: projectsIds },
+    //   "creator._id": userId,
+    // });
     isLoading = false;
 
     return {
@@ -296,13 +335,90 @@ export const deleteProject = async (id: string) => {
     });
 
     const updateUser = await User.findByIdAndUpdate(session.user._id, {
-      $pull: { projects: id },
+      $pull: { projects: id, favorites: id },
     });
     await axios.delete(`${appUrl}/api/cloudinary?id=${findProject.posterId}`);
-
+    await User.updateOne({
+      _id: session.user._id,
+      email: session?.user?.email,
+    });
     return parseStringify(project);
   } catch (error: any) {
     console.error("Error deleting project:", error.message);
     throw error;
   }
 };
+export const toggleFavorite = async (id: string, pathname: string) => {
+  try {
+    const session = await getCurrentSession();
+
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
+    const userData = (await getUser(session.user.email)) as any;
+    const findProject = await Project.findById(id);
+
+    if (!findProject) throw new Error("Project not found");
+    const favorites = userData.favorites.map(String) as string[];
+    const { ObjectId } = mongoose.Types;
+
+    const updateId = new ObjectId(id);
+
+    let status = null;
+    if (favorites.includes(updateId.toString())) {
+      status = await User.updateOne(
+        { _id: session.user._id, email: session?.user?.email },
+        { $pull: { favorites: updateId } }
+      );
+        await Project.updateOne(
+          { _id: updateId },
+          { $inc: { likesCount: -1 } }
+        );
+    } else {
+      status = await User.updateOne(
+        { _id: session.user._id, email: session?.user?.email },
+        { $addToSet: { favorites: updateId } }
+      );
+      await Project.updateOne({ _id: updateId }, { $inc: { likesCount: 1 } });
+    }
+
+    revalidatePath(pathname || "/", "page");
+    return parseStringify(status) as any;
+  } catch (error: any) {
+    console.error("Error toggle favorite:", error.message);
+    throw error;
+  }
+};
+export const getFavorites = async () => {
+  try {
+    const session = await getCurrentSession();
+
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
+
+    const favorites = session.user.favorites;
+
+    const projects = await Project.find({ _id: { $in: favorites } });
+
+    return parseStringify(projects);
+  } catch (error: any) {
+    console.error("Error getting favorites: ", error.message);
+    throw error;
+  }
+};
+// export const updateL = async () => {
+//   try {
+//     const session = await getCurrentSession();
+
+//     if (!session) throw new Error("Unauthorized");
+//     await mongoConnect();
+
+//     const favorites = session.user.favorites;
+
+//     const projects = await Project.find({ _id: { $in: favorites } });
+
+//     return parseStringify(projects);
+//   } catch (error: any) {
+//     console.error("Error getting favorites: ", error.message);
+//     throw error;
+//   }
+// };

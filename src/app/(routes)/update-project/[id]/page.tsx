@@ -2,10 +2,10 @@ import EmptyState from "@/components/EmptyState";
 import { getProject } from "@/lib/actions";
 import ProjectForm from "../../_components/ProjectForm";
 import Container from "@/components/Container";
-import LoaderProvider from "@/components/providers/LoaderProvider";
+import LoaderWrapper from "@/components/LoaderWrapper";
 
 const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
-  const { project, isLoading } = await getProject(id);
+  const { project, isLoading } = await getProject(id, "");
   if (!project) {
     return (
       <section className="flexStart flex-col paddings">
@@ -18,7 +18,7 @@ const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
   }
 
   return (
-    <LoaderProvider isLoading={isLoading}>
+    <LoaderWrapper isLoading={isLoading}>
       <section className="mb-10">
         <Container>
           <h3 className="head-text my-10 md:!w-fit md:mx-auto">
@@ -27,7 +27,7 @@ const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
           <ProjectForm type="update" project={project} />
         </Container>
       </section>
-    </LoaderProvider>
+    </LoaderWrapper>
   );
 };
 

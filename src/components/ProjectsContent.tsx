@@ -27,9 +27,7 @@ const ProjectsContent = async ({ data, isProjectPage }: Props) => {
           <ProjectCard
             isProjectPage={isProjectPage}
             key={`${project?._id}`}
-            id={project?._id}
-            posterUrl={project?.posterUrl}
-            title={project?.title}
+            {...project}
             name={project?.creator?.name}
             avatarUrl={project?.creator?.avatarUrl}
             userId={project?.creator?._id}

@@ -2,7 +2,7 @@ import Categories from "@/components/Categories";
 import EmptyState from "@/components/EmptyState";
 import ProjectCard from "@/components/ProjectCard";
 import ProjectsContent from "@/components/ProjectsContent";
-import LoaderProvider from "@/components/providers/LoaderProvider";
+import LoaderWrapper from "@/components/LoaderWrapper";
 import SearchBar from "@/components/SearchBar";
 import { fetchProjects } from "@/lib/actions";
 import { ProjectInterface } from "@/types";
@@ -34,10 +34,10 @@ const Home = async () => {
 
   return (
     <>
-      <LoaderProvider isLoading={isLoading}>
+      <LoaderWrapper isLoading={isLoading}>
         <SearchBar />
         <ProjectsContent data={projects} />
-      </LoaderProvider>
+      </LoaderWrapper>
     </>
   );
 };

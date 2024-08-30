@@ -12,9 +12,6 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  // pages: {
-  //   error: "/error",
-  // },
 
   debug: process.env.NODE_ENV === "development",
   session: {
@@ -46,8 +43,7 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }) {
       try {
-        await mongoConnect();
-
+        await mongoConnect()
         if (!user.email || !user) return false;
         const userExists = (await getUser(
           user?.email as string

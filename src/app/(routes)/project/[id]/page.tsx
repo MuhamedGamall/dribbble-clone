@@ -5,13 +5,13 @@ import Container from "@/components/Container";
 import EmptyState from "@/components/EmptyState";
 import BacktoHomeLink from "@/components/BacktoHomeLink";
 import Categories from "@/components/Categories";
-import LoaderProvider from "@/components/providers/LoaderProvider";
+import LoaderWrapper from "@/components/LoaderWrapper";
 import RelatedProjects from "@/components/RelatedProjects";
 import { getCurrentSession, getProject } from "@/lib/actions";
 import ProjectActions from "./_components/ProjectActions";
 
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
-  const { project, isLoading } = await getProject(id);
+  const { project, isLoading } = await getProject(id,'project/'+id);
 
   const session = await getCurrentSession();
 
@@ -32,7 +32,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
     session?.user?.email === project?.creator?.email &&
     session?.user?._id.toString() === project?.creator?._id.toString();
   return (
-    <LoaderProvider isLoading={isLoading}>
+    <LoaderWrapper isLoading={isLoading}>
       <Container>
         <Categories />
         <div className={"lg:px-40 px-8 pt-14 pb-72"}>
@@ -54,10 +54,12 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                   {project?.title}
                 </p>
                 <div className="user-info">
-                  <Link href={renderLink()}>{project?.creator?.name}</Link>
+                  <Link href={renderLink()} className="capitalize">
+                    {project?.creator?.name}
+                  </Link>
                   <Image src="/dot.svg" width={4} height={4} alt="dot" />
                   <Link
-                    href={`/?category=${project?.category}`}
+                    href={`/search/?q=${project?.category}`}
                     className="text-primary-purple font-semibold"
                   >
                     {project?.category}
@@ -66,7 +68,11 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
               </div>
             </div>
             <div className="flex justify-end items-center gap-2">
-              <ProjectActions projectId={project?._id} isCreator={isCreator} />
+              <ProjectActions
+                projectId={project?._id}
+                isFavorite={project?.isFavorite}
+                isCreator={isCreator}
+              />
             </div>
           </section>
 
@@ -142,7 +148,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
           />
         </div>
       </Container>
-    </LoaderProvider>
+    </LoaderWrapper>
   );
 };
 

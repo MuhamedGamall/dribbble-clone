@@ -22,7 +22,7 @@ const RelatedProjects = async ({
     projectIdForIgnore,
     projectsIds,
   });
-  if (!projects?.length) {
+  if (projects?.length ===0) {
     return (
       <section className="flexStart flex-col paddings ">
         <EmptyState
@@ -39,10 +39,10 @@ const RelatedProjects = async ({
     <section className="flex flex-col mt-32 w-full">
       <div className="flexBetween">
         <p className="text-base font-bold">
-          More by
+          More by{' '}
           <Link
             href={`/profile/${projects?.[0]?.creator?._id}`}
-            className="text-primary-purple"
+            className="text-primary-purple capitalize"
           >
             {projects?.[0]?.creator?.name}
           </Link>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Spinner } from "../LoadingSpinner";
+import { Spinner } from "./LoadingSpinner";
 
-export default function LoaderProvider({
+export default function LoaderWrapper({
   children,
   isLoading,
 }: {

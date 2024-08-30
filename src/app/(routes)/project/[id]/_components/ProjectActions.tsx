@@ -1,22 +1,26 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
-import { deleteProject } from "@/lib/actions";
-import { Heart } from "lucide-react";
+import { deleteProject, toggleFavorite } from "@/lib/actions";
+import { cn } from "@/lib/utils";
+import { HeartIcon, Loader2 } from "lucide-react";
 
 type Props = {
   projectId: string;
   isCreator: boolean;
+  isFavorite: boolean;
 };
 
-const ProjectActions = ({ projectId, isCreator }: Props) => {
+const ProjectActions = ({ projectId, isFavorite, isCreator }: Props) => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const router = useRouter();
-
+  const [isOptimisticFavorite, setOptimisticFavorite] = useState(isFavorite);
+  const [disabledFavBtn, setDisabledFavBtn] = useState(false);
+  const pathname = usePathname();
   const handleDeleteProject = async () => {
     if (!isCreator) return;
 
@@ -33,16 +37,36 @@ const ProjectActions = ({ projectId, isCreator }: Props) => {
       setIsDeleting(false);
     }
   };
-
+  const toggleFav = async () => {
+    try {
+      setOptimisticFavorite(!isOptimisticFavorite);
+      setDisabledFavBtn(true);
+      await toggleFavorite(projectId, pathname);
+      setDisabledFavBtn(false);
+    } catch (error) {
+      console.error(error);
+      setOptimisticFavorite(isOptimisticFavorite);
+    }
+  };
   return (
     <>
       <button
+        disabled={disabledFavBtn}
+        onClick={toggleFav}
         type="button"
-        // disabled={isDeleting}
-        className={`flexCenter favorite-action_btn `}
-        // onClick={handleDeleteProject}
+        className={cn(`flexCenter  favorite-action_btn  `, {
+          "bg-slate-500 ": disabledFavBtn,
+        })}
       >
-        <Heart size={15} className="text-slate-200" />
+        {disabledFavBtn && (
+          <Loader2 size={15} className="animate-spin text-slate-700" />
+        )}
+        {!disabledFavBtn &&
+          (isOptimisticFavorite ? (
+            <HeartIcon size={15} fill="#ff474791" className="text-red-500" />
+          ) : (
+            <HeartIcon size={15} className="text-slate-700" />
+          ))}
       </button>
       {isCreator && (
         <>
@@ -57,11 +81,16 @@ const ProjectActions = ({ projectId, isCreator }: Props) => {
             type="button"
             disabled={isDeleting}
             className={`flexCenter delete-action_btn ${
-              isDeleting ? "bg-gray" : "bg-primary-purple"
+              isDeleting ? "bg-slate-500" : "bg-primary-purple"
             }`}
             onClick={handleDeleteProject}
           >
-            <Image src="/trash.svg" width={15} height={15} alt="delete" />
+            {isDeleting && (
+              <Loader2 size={15} className="animate-spin text-slate-700" />
+            )}
+            {!isDeleting && (
+              <Image src="/trash.svg" width={15} height={15} alt="delete" />
+            )}
           </button>
         </>
       )}
