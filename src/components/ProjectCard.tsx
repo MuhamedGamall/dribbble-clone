@@ -22,13 +22,14 @@ const ProjectCard = ({
   posterUrl,
   title,
   name,
+  viewership,
   likesCount,
   isFavorite,
   avatarUrl,
   userId,
+
   isProjectPage,
 }: Props) => {
-  const [randomViews, setRandomViews] = useState("");
   const [isOptimisticFavorite, setOptimisticFavorite] = useState(isFavorite);
   const [isOptimisticLikesCount, setOptimisticLikesCount] =
     useState(likesCount);
@@ -37,7 +38,9 @@ const ProjectCard = ({
   const toggleFav = async () => {
     try {
       setOptimisticFavorite(!isOptimisticFavorite);
-      setOptimisticLikesCount(isOptimisticFavorite ? likesCount - 1 : likesCount + 1);
+      setOptimisticLikesCount(
+        isOptimisticFavorite ? likesCount - 1 : likesCount + 1
+      );
       setDisabledFavBtn(true);
       await toggleFavorite(_id, pathname);
       setDisabledFavBtn(false);
@@ -109,7 +112,7 @@ const ProjectCard = ({
             </div>
             <div className="flexCenter gap-2">
               <Image src="/eye.svg" width={12} height={9} alt="eye" />
-              <p className="text-sm">{randomViews}</p>
+              <p className="text-sm">{formatNumber(viewership)}</p>
             </div>
           </div>
         </div>

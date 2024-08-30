@@ -1,8 +1,6 @@
 import Link from "next/link";
 
 import { getUserProjects } from "@/lib/actions";
-import { ProjectInterface, UserProfile } from "@/types";
-import Image from "next/image";
 import ProjectsContent from "./ProjectsContent";
 import EmptyState from "./EmptyState";
 
@@ -21,6 +19,7 @@ const RelatedProjects = async ({
     userId,
     projectIdForIgnore,
     projectsIds,
+    limit: 6,
   });
   if (projects?.length === 0) {
     return (

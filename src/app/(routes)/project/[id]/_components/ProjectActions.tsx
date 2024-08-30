@@ -3,9 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { deleteProject, toggleFavorite } from "@/lib/actions";
+import {
+  addProjectViewCount,
+  deleteProject,
+  toggleFavorite,
+} from "@/lib/actions";
 import { cn } from "@/lib/utils";
 import { HeartIcon, Loader2 } from "lucide-react";
 
@@ -17,10 +21,20 @@ type Props = {
 
 const ProjectActions = ({ projectId, isFavorite, isCreator }: Props) => {
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const router = useRouter();
   const [isOptimisticFavorite, setOptimisticFavorite] = useState(isFavorite);
   const [disabledFavBtn, setDisabledFavBtn] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (projectId) {
+      const handleViewsCount = async () => {
+        await addProjectViewCount(projectId, pathname);
+      };
+      handleViewsCount();
+    }
+  }, [projectId]);
+
   const handleDeleteProject = async () => {
     if (!isCreator) return;
 

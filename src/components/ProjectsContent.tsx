@@ -1,7 +1,9 @@
 "use client";
 import EmptyState from "@/components/EmptyState";
 import ProjectCard from "@/components/ProjectCard";
+import { cn } from "@/lib/utils";
 import { ProjectInterface } from "@/types";
+import { revalidatePath } from "next/cache";
 import { usePathname } from "next/navigation";
 
 type Props = {
@@ -13,8 +15,6 @@ const ProjectsContent =  ({ data, isProjectPage }: Props) => {
   const pathname = usePathname();
   const isFavoritesPage = pathname?.includes("favorites");
   if (data?.length === 0 && !isProjectPage) {
-    console.log( pathname?.includes("favorites"));
-    
     return (
       <section className="flexStart flex-col paddings">
         <EmptyState
@@ -25,9 +25,8 @@ const ProjectsContent =  ({ data, isProjectPage }: Props) => {
       </section>
     );
   }
-
   return (
-    <section className="flexStart flex-col paddings mb-16 w-full">
+    <section className={cn("flexStart flex-col paddings mb-16 w-full")}>
       <section className="projects-grid  w-full">
         {data?.map((project: ProjectInterface) => (
           <ProjectCard

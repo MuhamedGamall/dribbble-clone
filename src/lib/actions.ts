@@ -220,7 +220,6 @@ export const fetchProjects = async ({
       filter._id = { $in: favoritesIds };
     }
 
-
     const projects = await Project.aggregate([
       { $match: filter },
       {
@@ -236,7 +235,6 @@ export const fetchProjects = async ({
       projects: parseStringify(projects),
       isLoading,
     } as { projects: ProjectInterface[]; isLoading: boolean };
-
   } catch (error: any) {
     console.error("Error fetching projects:", error.message);
     throw error;
@@ -277,10 +275,12 @@ export const getUserProjects = async ({
   projectIdForIgnore,
   userId,
   projectsIds,
+  limit = 0,
 }: {
   projectIdForIgnore?: string;
   userId?: string;
   projectsIds?: string[];
+  limit?: number;
 }) => {
   try {
     let isLoading = true;
@@ -307,12 +307,8 @@ export const getUserProjects = async ({
           isFavorite: { $in: ["$_id", session?.user?.favorites || []] },
         },
       },
+      ...(limit > 0 ? [{ $limit: limit }] : []),
     ]);
-
-    // .find({
-    //   _id: { $ne: projectIdForIgnore, $in: projectsIds },
-    //   "creator._id": userId,
-    // });
     isLoading = false;
 
     return {
@@ -413,20 +409,32 @@ export const getFavorites = async () => {
     throw error;
   }
 };
-// export const updateL = async () => {
-//   try {
-//     const session = await getCurrentSession();
+export const addProjectViewCount = async (id: string,pathname:string) => {
+  try {
+    const session = await getCurrentSession();
 
-//     if (!session) throw new Error("Unauthorized");
-//     await mongoConnect();
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
 
-//     const favorites = session.user.favorites;
+    const findProject = await Project.findById(id);
 
-//     const projects = await Project.find({ _id: { $in: favorites } });
+    if (!findProject) throw new Error("Project not found");
 
-//     return parseStringify(projects);
-//   } catch (error: any) {
-//     console.error("Error getting favorites: ", error.message);
-//     throw error;
-//   }
-// };
+    const userSeeingIds = session.user.seeing.map(String) as string[];
+    let status = null;
+    if (!userSeeingIds.includes(id.toString())) {
+      await User.findByIdAndUpdate(session.user._id, {
+        $addToSet: { seeing: id },
+      });
+      status = await Project.updateOne(
+        { _id: id },
+        { $inc: { viewership: 1 } }
+      );
+    }
+    revalidatePath(pathname||'/', "page");
+    return parseStringify(status) as any;
+  } catch (error: any) {
+    console.error("Error in adding project view count:", error.message);
+    throw error;
+  }
+};

@@ -11,7 +11,7 @@ import { getCurrentSession, getProject } from "@/lib/actions";
 import ProjectActions from "./_components/ProjectActions";
 
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
-  const { project, isLoading } = await getProject(id, "project/" + id);
+  const { project, isLoading } = await getProject(id, "/project/" + id);
 
   const session = await getCurrentSession();
 
@@ -62,7 +62,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                   </Link>
                   <Image src="/dot.svg" width={4} height={4} alt="dot" />
                   <Link
-                    href={`/search/?q=${project?.category}`}
+                    href={`/?q=${project?.category}`}
                     className="text-primary-purple font-semibold"
                   >
                     {project?.category}
@@ -80,13 +80,15 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
           </section>
 
           <section className="mt-14 mx-auto w-fit">
-            <Image
-              src={`${project?.posterUrl}`}
-              className="object-cover rounded-2xl"
-              width={1064}
-              height={798}
-              alt="poster"
-            />
+            <Link href={project?.posterUrl} target="_blank" rel="noreferrer">
+              <Image
+                src={`${project?.posterUrl}`}
+                className="object-cover rounded-2xl"
+                width={1064}
+                height={798}
+                alt="poster"
+              />
+            </Link>
           </section>
 
           <section className="flexCenter flex-col mt-20">

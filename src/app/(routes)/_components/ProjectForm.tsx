@@ -81,8 +81,8 @@ export default function ProjectForm({
         await createProject({
           data: values,
         }).then(() => {
-          router.push("/");
-          router.refresh();
+          toast("Project created successfully.");
+          return form.reset();
         });
       }
 
