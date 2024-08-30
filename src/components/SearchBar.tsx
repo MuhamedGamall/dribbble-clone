@@ -1,6 +1,6 @@
 "use client";
 import { Search } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Categories from "./Categories";
 import { Input } from "./ui/input";
@@ -8,14 +8,15 @@ import { Input } from "./ui/input";
 export default function SearchBar({ q }: { q?: string | null | undefined }) {
   const router = useRouter();
   const [query, setQuery] = useState(q || "");
+  const pathname = usePathname();
   useEffect(() => {
     setQuery(q || "");
   }, [q]);
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!query?.trim()) return router.push(`/`);
-    router.push(`/search?q=${query?.trim()}`);
+    if (!query?.trim()) return router.push(pathname);
+    router.push(`${pathname}/?q=${query?.trim()}`);
     router.refresh();
   };
   return (

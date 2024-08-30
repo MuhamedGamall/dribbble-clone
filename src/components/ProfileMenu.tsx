@@ -3,8 +3,9 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -46,14 +47,25 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
                 {session?.name}
               </p>
             </Link>
+            <DropdownMenuItem asChild>
+              <Link
+                href={"/favorites"}
+                type="button"
+                className="text-sm  w-full pt-3 p-2"
+              >
+                Favorites
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <button
-              type="button"
-              className="text-sm font-bold text-primary/50 text-center w-full pt-3 p-2"
-              onClick={() => signOut()}
-            >
-              Sign out
-            </button>
+            <DropdownMenuItem asChild>
+              <button
+                type="button"
+                className="text-sm font-bold text-primary/50 w-full pt-3 p-2"
+                onClick={() => signOut()}
+              >
+                Sign out
+              </button>
+            </DropdownMenuItem>
           </div>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,23 +1,24 @@
-import Categories from "@/components/Categories";
-import EmptyState from "@/components/EmptyState";
-import ProjectsContent from "@/components/ProjectsContent";
 import LoaderWrapper from "@/components/LoaderWrapper";
+import ProjectsContent from "@/components/ProjectsContent";
 import SearchBar from "@/components/SearchBar";
 import { fetchProjects } from "@/lib/actions";
-import React from "react";
 
-export default async function SearchPage({
+const FavoritesPage = async ({
   searchParams: { q },
 }: {
   searchParams: { q: string };
-}) {
-  const { projects, isLoading } = await fetchProjects({ searchQuery: q });
+}) => {
+  const { projects, isLoading } = await fetchProjects({ favoritesOnly: true, searchQuery: q });
+
+
   return (
     <>
       <LoaderWrapper isLoading={isLoading}>
-        <SearchBar q={q} />
+        <SearchBar />
         <ProjectsContent data={projects} />
       </LoaderWrapper>
     </>
   );
-}
+};
+
+export default FavoritesPage;

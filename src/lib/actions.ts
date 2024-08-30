@@ -192,14 +192,17 @@ export const updateProject = async ({
 
 export const fetchProjects = async ({
   searchQuery,
+  favoritesOnly,
 }: {
   searchQuery?: string;
+  favoritesOnly?: boolean;
 }) => {
   try {
     await mongoConnect();
     const session = await getCurrentSession();
     const favoritesIds = session?.user?.favorites;
-    let filter = {};
+
+    let filter = {} as any;
     let isLoading = true;
 
     if (searchQuery) {
@@ -213,6 +216,11 @@ export const fetchProjects = async ({
       };
     }
 
+    if (favoritesOnly) {
+      filter._id = { $in: favoritesIds };
+    }
+
+
     const projects = await Project.aggregate([
       { $match: filter },
       {
@@ -221,11 +229,14 @@ export const fetchProjects = async ({
         },
       },
     ]);
+
     isLoading = false;
+
     return {
       projects: parseStringify(projects),
       isLoading,
     } as { projects: ProjectInterface[]; isLoading: boolean };
+
   } catch (error: any) {
     console.error("Error fetching projects:", error.message);
     throw error;

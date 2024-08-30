@@ -11,7 +11,7 @@ import { getCurrentSession, getProject } from "@/lib/actions";
 import ProjectActions from "./_components/ProjectActions";
 
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
-  const { project, isLoading } = await getProject(id,'project/'+id);
+  const { project, isLoading } = await getProject(id, "project/" + id);
 
   const session = await getCurrentSession();
 
@@ -22,6 +22,9 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
         <EmptyState
           title="Failed to fetch project info"
           subtitle="No project found"
+          link="/"
+          showButton
+          buttonTitle="Back to home"
         />
       </section>
     );

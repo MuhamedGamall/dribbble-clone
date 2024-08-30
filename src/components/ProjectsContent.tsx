@@ -1,21 +1,27 @@
+"use client";
 import EmptyState from "@/components/EmptyState";
 import ProjectCard from "@/components/ProjectCard";
 import { ProjectInterface } from "@/types";
+import { usePathname } from "next/navigation";
 
 type Props = {
   data: ProjectInterface[];
   isProjectPage?: boolean;
 };
 
-export const dynamic = "force-dynamic";
-export const dynamicParams = true;
-export const revalidate = 0;
-
-const ProjectsContent = async ({ data, isProjectPage }: Props) => {
+const ProjectsContent =  ({ data, isProjectPage }: Props) => {
+  const pathname = usePathname();
+  const isFavoritesPage = pathname?.includes("favorites");
   if (data?.length === 0 && !isProjectPage) {
+    console.log( pathname?.includes("favorites"));
+    
     return (
       <section className="flexStart flex-col paddings">
-        <EmptyState showCreateButton />
+        <EmptyState
+          showButton
+          buttonTitle={isFavoritesPage ? "Add some favorites now" : ""}
+          link={isFavoritesPage ? "/" : "/create-project"}
+        />
       </section>
     );
   }

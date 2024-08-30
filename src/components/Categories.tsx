@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { categoryFilters } from "@/constant";
 import Container from "./Container";
@@ -8,14 +8,14 @@ import Container from "./Container";
 const Categories = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
+  const pathname = usePathname();
   const categoryParam = searchParams.get("q");
 
   const handleTags = (item: string) => {
     if (item === categoryParam) {
-      router.push("/");
+      router.push(pathname);
     } else {
-      router.push(`/search?q=${item}`);
+      router.push(`${pathname}/?q=${item}`);
     }
     router.refresh();
   };
