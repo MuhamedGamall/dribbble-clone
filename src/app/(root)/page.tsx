@@ -2,6 +2,7 @@ import Categories from "@/components/Categories";
 import EmptyState from "@/components/EmptyState";
 import ProjectCard from "@/components/ProjectCard";
 import ProjectsContent from "@/components/ProjectsContent";
+import LoaderProvider from "@/components/providers/LoaderProvider";
 import SearchBar from "@/components/SearchBar";
 import { fetchProjects } from "@/lib/actions";
 import { ProjectInterface } from "@/types";
@@ -20,9 +21,9 @@ export const dynamicParams = true;
 export const revalidate = 0;
 
 const Home = async () => {
-  const data = await fetchProjects({});
+  const { projects, isLoading } = await fetchProjects({});
 
-  if (data?.length === 0) {
+  if (projects?.length === 0) {
     return (
       <section className="flexStart flex-col paddings">
         <Categories />
@@ -33,8 +34,10 @@ const Home = async () => {
 
   return (
     <>
-      <SearchBar  />
-      <ProjectsContent data={data}  />
+      <LoaderProvider isLoading={isLoading}>
+        <SearchBar />
+        <ProjectsContent data={projects} />
+      </LoaderProvider>
     </>
   );
 };

@@ -13,7 +13,8 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
   }, [q]);
   const handleSearch = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!query?.trim()) return;
+
+    if (!query?.trim()) return router.push(`/`);
     router.push(`/search?q=${query?.trim()}`);
     router.refresh();
   };
@@ -36,7 +37,7 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
           <Search size={25} className="text-slate-300 " />
         </button>
       </form>
-      <div className="mt-[70px]"/>
+      <div className="mt-[70px]" />
       <Categories />
     </div>
   );

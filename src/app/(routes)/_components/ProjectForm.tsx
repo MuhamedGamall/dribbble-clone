@@ -16,6 +16,7 @@ import { createProject, updateProject } from "@/lib/actions";
 import { useSession } from "next-auth/react";
 import { ProjectInterface, UserProfile } from "@/types";
 import { Session } from "next-auth";
+import BacktoHomeLink from "@/components/BacktoHomeLink";
 const strictUrlPattern =
   /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
 export const ProjectSchema = z.object({
@@ -80,7 +81,7 @@ export default function ProjectForm({
         await createProject({
           data: values,
         }).then(() => {
-          router.replace("/");
+          router.push("/");
           router.refresh();
         });
       }
@@ -90,11 +91,10 @@ export default function ProjectForm({
           data: values,
           projectId: project?._id,
           posterId: project?.posterId,
-        }).then(() => {
-          router.replace("/");
-          router.refresh();
-        }) as any
-        form.setValue("image", updatedProject.posterUrl) ;
+        });
+        router.refresh();
+        form.setValue("image", updatedProject.posterUrl);
+        return toast("Project updated successfully.");
       }
     } catch (error) {
       console.error(error);
@@ -113,6 +113,7 @@ export default function ProjectForm({
         onSubmit={form.handleSubmit(onSubmit)}
         className="max-w-[800px] mx-auto space-y-6 "
       >
+        <BacktoHomeLink />
         <CustomFormField
           fieldType={FormFieldType.SKELETON}
           control={form.control}

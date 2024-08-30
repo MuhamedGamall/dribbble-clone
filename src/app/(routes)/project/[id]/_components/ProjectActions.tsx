@@ -47,7 +47,7 @@ const ProjectActions = ({ projectId, isCreator }: Props) => {
       {isCreator && (
         <>
           <Link
-            href={`/edit-project/${projectId}`}
+            href={`/update-project/${projectId}`}
             className="flexCenter edit-action_btn"
           >
             <Image src="/pencile.svg" width={15} height={15} alt="edit" />

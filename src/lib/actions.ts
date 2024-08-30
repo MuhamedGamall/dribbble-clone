@@ -2,16 +2,14 @@
 import { ProjectSchema } from "@/app/(routes)/_components/ProjectForm";
 import Project from "@/models/project";
 import User from "@/models/user";
+import { ProjectInterface } from "@/types";
+import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 import mongoConnect from "./mongo-connect";
 import { authOptions } from "./session";
-import axios from "axios";
 import { parseStringify } from "./utils";
-import { headers } from "next/headers";
-import { ProjectInterface } from "@/types";
-import { Session } from "inspector";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 cloudinary.config({
@@ -108,6 +106,10 @@ export const createProject = async ({
       },
     });
 
+    const updateUser = await User.findByIdAndUpdate(session.user._id, {
+      $addToSet: { projects: newProject._id },
+    });
+
     return parseStringify(newProject) as ProjectInterface;
   } catch (error: any) {
     console.error("Error creating project:", error.message);
@@ -194,6 +196,8 @@ export const fetchProjects = async ({
   try {
     await mongoConnect();
     let filter = {};
+    let isLoading = true;
+
     if (searchQuery) {
       const regex = new RegExp(searchQuery, "i");
       filter = {
@@ -204,9 +208,12 @@ export const fetchProjects = async ({
         ],
       };
     }
-    const projects = await Project.find(filter)
-
-    return parseStringify(projects) as ProjectInterface[];
+    const projects = await Project.find(filter);
+    isLoading = false;
+    return {
+      projects: parseStringify(projects),
+      isLoading,
+    } as { projects: ProjectInterface[]; isLoading: boolean };
   } catch (error: any) {
     console.error("Error fetching projects:", error.message);
     throw error;
@@ -214,6 +221,7 @@ export const fetchProjects = async ({
 };
 export const getProject = async (id: string) => {
   try {
+    let isLoading = true;
     const session = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
 
@@ -222,8 +230,45 @@ export const getProject = async (id: string) => {
     const project = await Project.findById(id);
 
     if (!project) throw new Error("Project not found");
+    isLoading = false;
+    return {
+      project: parseStringify(project),
+      isLoading,
+    } as { project: ProjectInterface; isLoading: boolean };
+  } catch (error: any) {
+    console.error("Error fetching project:", error.message);
+    throw error;
+  }
+};
+export const getUserProjects = async ({
+  projectIdForIgnore,
+  userId,
+  projectsIds,
+}: {
+  projectIdForIgnore?: string;
+  userId?: string;
+  projectsIds?: string[];
+}) => {
+  try {
+    let isLoading = true;
 
-    return parseStringify(project) as ProjectInterface;
+    const session = await getCurrentSession();
+    if (!session) throw new Error("Unauthorized");
+
+    await mongoConnect();
+    if (!userId) throw new Error("userId  not found");
+    if (!projectIdForIgnore) throw new Error("projectIdForIgnore not found");
+
+    const projects = await Project.find({
+      _id: { $ne: projectIdForIgnore, $in: projectsIds },
+      "creator._id": userId,
+    });
+    isLoading = false;
+
+    return {
+      projects: parseStringify(projects),
+      isLoading,
+    } as { projects: ProjectInterface[]; isLoading: boolean };
   } catch (error: any) {
     console.error("Error fetching project:", error.message);
     throw error;
@@ -235,18 +280,12 @@ export const deleteProject = async (id: string) => {
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
-    console.log({
-      _id: id,
-      "creator.email": session?.user?.email,
-      "creator._id": session?.user?._id,
-    });
 
     const findProject = await Project.findOne({
       _id: id,
       "creator.email": session?.user?.email,
       "creator._id": session?.user?._id,
     });
-    console.log(findProject);
 
     if (!findProject) throw new Error("Project not found");
 
@@ -256,6 +295,9 @@ export const deleteProject = async (id: string) => {
       "creator._id": session?.user?._id,
     });
 
+    const updateUser = await User.findByIdAndUpdate(session.user._id, {
+      $pull: { projects: id },
+    });
     await axios.delete(`${appUrl}/api/cloudinary?id=${findProject.posterId}`);
 
     return parseStringify(project);
