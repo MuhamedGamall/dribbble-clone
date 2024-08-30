@@ -1,22 +1,12 @@
-import { User, Session } from "next-auth";
-
-export type FormState = {
-  title: string;
-  description: string;
-  image: string;
-  ProjectUrl: string;
-  githubUrl: string;
-  category: string;
-};
-
 export interface ProjectInterface {
   title: string;
   description: string;
-  likesCount: number;
   posterUrl: string;
   posterId: string;
   projectUrl: string;
   githubUrl: string;
+  likesCount: number;
+  viewership: number;
   isFavorite: boolean;
   category: string;
   _id: string;
@@ -36,15 +26,9 @@ export interface UserProfile {
   avatarUrl: string;
   githubUrl: string | null;
   linkedinUrl: string | null;
-  projects: {
-    edges: { node: ProjectInterface }[];
-    pageInfo: {
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-      startCursor: string;
-      endCursor: string;
-    };
-  };
+  seeing: string[];
+  projects: string[];
+  favorites: string[];
 }
 
 export interface ProjectForm {
@@ -54,4 +38,9 @@ export interface ProjectForm {
   ProjectUrl: string;
   githubUrl: string;
   category: string;
+}
+
+export interface CurrentSession {
+  user: UserProfile & { image: string };
+  expires: Date;
 }

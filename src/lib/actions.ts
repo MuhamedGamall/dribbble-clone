@@ -2,7 +2,7 @@
 import { ProjectSchema } from "@/app/(routes)/_components/ProjectForm";
 import Project from "@/models/project";
 import User from "@/models/user";
-import { ProjectInterface } from "@/types";
+import { CurrentSession, ProjectInterface } from "@/types";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
@@ -22,7 +22,7 @@ cloudinary.config({
 
 export async function getCurrentSession() {
   const session = await getServerSession(authOptions);
-  return session as any;
+  return session as CurrentSession | null;
 }
 export const createUser = async (userData: {
   name: string;
@@ -134,7 +134,7 @@ export const updateProject = async ({
   try {
     const session = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
-    const creatorId = session?.user?._id;
+    const creatorId = session?.user._id;
 
     await mongoConnect();
 
@@ -369,10 +369,7 @@ export const toggleFavorite = async (id: string, pathname: string) => {
         { _id: session.user._id, email: session?.user?.email },
         { $pull: { favorites: updateId } }
       );
-        await Project.updateOne(
-          { _id: updateId },
-          { $inc: { likesCount: -1 } }
-        );
+      await Project.updateOne({ _id: updateId }, { $inc: { likesCount: -1 } });
     } else {
       status = await User.updateOne(
         { _id: session.user._id, email: session?.user?.email },
