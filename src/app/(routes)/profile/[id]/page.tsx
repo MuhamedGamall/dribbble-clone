@@ -2,16 +2,9 @@ import Container from "@/components/Container";
 import ProjectsContent from "@/components/ProjectsContent";
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
   getCurrentSession,
   getFollowing,
-  getUserProjects,
-  toggleFollow,
+  getUserProjects
 } from "@/lib/actions";
 import { cn, formatNumber } from "@/lib/utils";
 import {
@@ -24,9 +17,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import FollowingModal from "./_components/FollowingModal";
-import { UpdateProfileModel } from "./_components/UpdateProfile";
-import { toast } from "sonner";
 import ToggleFollowButton from "./_components/ToggleFollowButton";
+import { UpdateProfileModel } from "./_components/UpdateProfile";
+import TooltipHover from "./_components/ToolribHover";
 
 type Props = {
   params: {
@@ -34,24 +27,7 @@ type Props = {
   };
 };
 
-export function TooltipHover({
-  children,
-  label,
-}: {
-  label: string;
-  children: any;
-}) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent>
-          <p>{label}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-}
+
 
 const UserProfile = async ({ params }: Props) => {
   const result = await getUserProjects({ userId: params?.id });
