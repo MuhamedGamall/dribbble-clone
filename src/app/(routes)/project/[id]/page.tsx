@@ -13,7 +13,7 @@ import ProjectActions from "./_components/ProjectActions";
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
   const { project, isLoading } = await getProject(id, "/project/" + id);
 
-  const session = await getCurrentSession();
+  const {session} = await getCurrentSession();
 
   if (!project) {
     return (

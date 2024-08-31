@@ -50,7 +50,7 @@ export function TooltipHover({
 
 const UserProfile = async ({ params }: Props) => {
   const result = await getUserProjects({ userId: params.id });
-  const session = await getCurrentSession();
+  const {session} = await getCurrentSession();
   return (
     <Container>
       <section className="flexCenter flex-col  w-full mx-auto paddings">

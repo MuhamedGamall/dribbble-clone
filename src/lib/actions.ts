@@ -22,8 +22,19 @@ cloudinary.config({
 });
 
 export async function getCurrentSession() {
-  const session = await getServerSession(authOptions);
-  return parseStringify(session) as CurrentSession | null;
+  try {
+    let loading = true;
+    const session = await getServerSession(authOptions);
+    loading = false;
+
+    return { session: parseStringify(session), loading } as {
+      session: CurrentSession | null;
+      loading: boolean;
+    };
+  } catch (error) {
+    console.log(error);
+    return { session: null, loading: false };
+  }
 }
 export const createUser = async (userData: {
   name: string;
@@ -80,7 +91,7 @@ export const createProject = async ({
   data: z.infer<typeof ProjectSchema>;
 }) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
     const creatorId = session?.user?._id;
 
@@ -139,7 +150,7 @@ export const updateProject = async ({
   posterId: string;
 }) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
     const creatorId = session?.user._id;
 
@@ -206,7 +217,7 @@ export const fetchProjects = async ({
 }) => {
   try {
     await mongoConnect();
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
@@ -251,7 +262,7 @@ export const fetchProjects = async ({
 export const getProject = async (id: string, pathname: string) => {
   try {
     let isLoading = true;
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
@@ -295,7 +306,7 @@ export const getUserProjects = async ({
     await mongoConnect();
     let isLoading = true;
 
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     if (!userId) throw new Error("userId not found");
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
@@ -343,7 +354,7 @@ export const getUserProjects = async ({
 };
 export const deleteProject = async (id: string) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
@@ -378,7 +389,7 @@ export const deleteProject = async (id: string) => {
 };
 export const toggleFavorite = async (id: string, pathname: string) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
@@ -415,7 +426,7 @@ export const toggleFavorite = async (id: string, pathname: string) => {
 };
 export const getFavorites = async () => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
@@ -433,7 +444,7 @@ export const getFavorites = async () => {
 };
 export const addProjectViewCount = async (id: string, pathname: string) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
@@ -462,7 +473,7 @@ export const addProjectViewCount = async (id: string, pathname: string) => {
 };
 export const updateProfile = async (data: z.infer<typeof ProfileSchema>) => {
   try {
-    const session = await getCurrentSession();
+    const { session } = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
     if (!data.name) {
       throw new Error("Name is required");
