@@ -2,7 +2,7 @@
 import { ProjectSchema } from "@/app/(routes)/_components/ProjectForm";
 import Project from "@/models/project";
 import User from "@/models/user";
-import { CurrentSession, ProjectInterface } from "@/types";
+import { CurrentSession, ProjectInterface, UserProfile } from "@/types";
 import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import { getServerSession } from "next-auth";
@@ -12,6 +12,7 @@ import { authOptions } from "./session";
 import { parseStringify } from "./utils";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { ProfileSchema } from "@/app/(routes)/profile/[id]/_components/UpdateProfile";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 cloudinary.config({
@@ -22,7 +23,7 @@ cloudinary.config({
 
 export async function getCurrentSession() {
   const session = await getServerSession(authOptions);
-  return session as CurrentSession | null;
+  return parseStringify(session) as CurrentSession | null;
 }
 export const createUser = async (userData: {
   name: string;
@@ -37,30 +38,36 @@ export const createUser = async (userData: {
     }
     const create = await User.create(userData);
 
-    return create;
+    return parseStringify(create);
   } catch (error: any) {
     console.log("[CREATE_USER]", error.message);
     throw error;
   }
 };
 
-export const getUser = async (email: string) => {
+export const getUser = async ({
+  email,
+  userId,
+}: {
+  email?: string;
+  userId?: string;
+}) => {
   try {
     await mongoConnect();
 
-    if (!email) {
-      throw new Error("No user email provided");
+    if (userId || email) {
+      const user = await User.findOne(
+        email ? { email } : { _id: userId }
+      ).lean();
+
+      if (!user) {
+        console.log("User not found");
+        return null;
+      }
+
+      return user as UserProfile | null;
     }
-
-    const user = await User.findOne({ email }).lean();
-
-    if (!user) {
-      console.log("User not found");
-
-      return null;
-    }
-
-    return user;
+    throw new Error("No user email or user id provided");
   } catch (error: any) {
     console.error("[GET_USER] Error fetching user:", error.message);
     throw error;
@@ -228,7 +235,6 @@ export const fetchProjects = async ({
         },
       },
     ]);
-
     isLoading = false;
 
     return {
@@ -274,23 +280,26 @@ export const getProject = async (id: string, pathname: string) => {
 export const getUserProjects = async ({
   projectIdForIgnore,
   userId,
-  projectsIds,
   limit = 0,
 }: {
   projectIdForIgnore?: string;
-  userId?: string;
-  projectsIds?: string[];
+  userId: string;
   limit?: number;
 }) => {
   try {
+    await mongoConnect();
     let isLoading = true;
 
     const session = await getCurrentSession();
-    if (!session) throw new Error("Unauthorized");
+    if (!userId) throw new Error("userId not found");
 
-    await mongoConnect();
-    if (!userId) throw new Error("userId  not found");
-    if (!projectIdForIgnore) throw new Error("projectIdForIgnore not found");
+    const get_user = await getUser({ userId });
+
+    if (!get_user) throw new Error("user not found");
+
+    const projectsIds = get_user.projects || [];
+
+    if (!session) throw new Error("Unauthorized");
 
     const projects = await Project.aggregate([
       {
@@ -314,7 +323,12 @@ export const getUserProjects = async ({
     return {
       projects: parseStringify(projects),
       isLoading,
-    } as { projects: ProjectInterface[]; isLoading: boolean };
+      user: parseStringify(get_user),
+    } as {
+      projects: ProjectInterface[];
+      isLoading: boolean;
+      user: UserProfile;
+    };
   } catch (error: any) {
     console.error("Error fetching project:", error.message);
     throw error;
@@ -361,7 +375,7 @@ export const toggleFavorite = async (id: string, pathname: string) => {
 
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
-    const userData = (await getUser(session.user.email)) as any;
+    const userData = (await getUser({ email: session.user.email })) as any;
     const findProject = await Project.findById(id);
 
     if (!findProject) throw new Error("Project not found");
@@ -409,7 +423,7 @@ export const getFavorites = async () => {
     throw error;
   }
 };
-export const addProjectViewCount = async (id: string,pathname:string) => {
+export const addProjectViewCount = async (id: string, pathname: string) => {
   try {
     const session = await getCurrentSession();
 
@@ -431,10 +445,31 @@ export const addProjectViewCount = async (id: string,pathname:string) => {
         { $inc: { viewership: 1 } }
       );
     }
-    revalidatePath(pathname||'/', "page");
+    revalidatePath(pathname || "/", "page");
     return parseStringify(status) as any;
   } catch (error: any) {
     console.error("Error in adding project view count:", error.message);
+    throw error;
+  }
+};
+export const updateProfile = async (data: z.infer<typeof ProfileSchema>) => {
+  try {
+    const session = await getCurrentSession();
+    if (!session) throw new Error("Unauthorized");
+    if (!data.name) {
+      throw new Error("Name is required");
+    }
+    await mongoConnect();
+    const update = await User.updateOne(
+      { _id: session.user._id },
+      {
+        ...data,
+        ...(data.name.trim() && { name: data.name }),
+      }
+    );
+    revalidatePath("/profile/" + session.user._id, "page");
+  } catch (error: any) {
+    console.error("Error in updating profile:", error.message);
     throw error;
   }
 };

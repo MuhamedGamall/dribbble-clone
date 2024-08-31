@@ -52,6 +52,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               placeholder={props.placeholder}
               {...field}
               className="shad-input border-0"
+              disabled={props.disabled}
             />
           </FormControl>
         </div>
@@ -75,7 +76,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             defaultValue={field.value || props.defaultValue}
           >
             <FormControl>
-              <SelectTrigger className="shad-input">
+              <SelectTrigger disabled={props.disabled} className="shad-input">
                 <SelectValue placeholder={props.placeholder} />
               </SelectTrigger>
             </FormControl>
@@ -97,7 +98,7 @@ const CustomFormField = (props: CustomProps) => {
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex-1">
+        <FormItem className="flex-1 w-full">
           {props.fieldType && label && (
             <FormLabel className="shad-input-label">{label}</FormLabel>
           )}

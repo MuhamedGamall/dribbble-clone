@@ -7,18 +7,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { User } from "lucide-react";
 import { Session } from "next-auth";
+import { Button } from "./ui/button";
+import { useState } from "react";
 
 const ProfileMenu = ({ session }: { session: Session | any }) => {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="flexCenter z-10 flex-col relative ">
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          {session?.image && (
+    <DropdownMenu onOpenChange={setOpen} open={open}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full  p-1 w-[60px] h-[60px]"
+        >
+          {session?.image ? (
             <Image
               src={session?.image}
               width={40}
@@ -26,50 +34,92 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
               className="rounded-full"
               alt="user profile image"
             />
+          ) : (
+            <User size={30} />
           )}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <div className="">
-            <Link
-              href={`/profile/${session?._id}`}
-              className="flex flex-col items-center gap-y-2 p-5"
-            >
-              {session?.image && (
-                <Image
-                  src={session?.image}
-                  className="rounded-full"
-                  width={80}
-                  height={80}
-                  alt="profile Image"
-                />
-              )}
-              <p className="font-semibold md:text-2xl capitalize">
-                {session?.name}
-              </p>
-            </Link>
-            <DropdownMenuItem asChild>
+          <span className="sr-only">Toggle user menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="bg-white">
+        {session && (
+          <Link
+            href={`/profile/${session?._id}`}
+            className="flex items-center gap-2 p-2"
+          >
+            {session?.image ? (
+              <Image
+                src={session?.image}
+                width={40}
+                height={40}
+                className="rounded-full"
+                alt="user profile image"
+              />
+            ) : (
+              <User size={40} />
+            )}
+            <div className="grid gap-0.5 leading-none">
+              <div className="font-semibold capitalize">{session?.name}</div>
+              <div className="text-sm text-muted-foreground ">
+                {session?.email}
+              </div>
+            </div>
+          </Link>
+        )}
+        {session ? (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setOpen(false)} asChild>
               <Link
-                href={"/favorites"}
-                type="button"
-                className="text-sm  w-full pt-3 p-2"
+                href={`/profile/${session?._id}`}
+                className="flex items-center gap-2"
               >
-                Favorites
+                <div className="h-4 w-4" />
+                <span>Profile</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <button
-                type="button"
-                className="text-sm font-bold text-primary/50 w-full pt-3 p-2"
-                onClick={() => signOut()}
-              >
-                Sign out
-              </button>
+            <DropdownMenuItem onClick={() => setOpen(false)} asChild>
+              <Link href={`/favorites/`} className="flex items-center gap-2">
+                <div className="h-4 w-4" />
+                <span>favorites</span>
+              </Link>
             </DropdownMenuItem>
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => {
+                setOpen(false);
+                signOut({ callbackUrl: "/" });
+              }}
+              asChild
+              className="p-3"
+            >
+              <span>Log Out</span>
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem
+            onClick={async () => {
+              setOpen(false);
+              await signIn("google", { callbackUrl: "/" });
+            }}
+            asChild
+            className="p-3"
+          >
+            <span className="flex items-center gap-2">
+              <Image
+                src={
+                  "https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
+                }
+                width={30}
+                height={30}
+                alt="google icon"
+              />{" "}
+              Log In with Google
+            </span>
+          </DropdownMenuItem>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

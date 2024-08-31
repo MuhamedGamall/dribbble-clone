@@ -149,7 +149,6 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
           <RelatedProjects
             userId={project?.creator?._id}
             projectIdForIgnore={project?._id}
-            projectsIds={session?.user?.projects}
           />
         </div>
       </Container>

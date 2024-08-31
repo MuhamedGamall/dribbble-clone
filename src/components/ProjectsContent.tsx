@@ -11,7 +11,7 @@ type Props = {
   isProjectPage?: boolean;
 };
 
-const ProjectsContent =  ({ data, isProjectPage }: Props) => {
+const ProjectsContent = ({ data, isProjectPage }: Props) => {
   const pathname = usePathname();
   const isFavoritesPage = pathname?.includes("favorites");
   if (data?.length === 0 && !isProjectPage) {
@@ -19,7 +19,7 @@ const ProjectsContent =  ({ data, isProjectPage }: Props) => {
       <section className="flexStart flex-col paddings">
         <EmptyState
           showButton
-          buttonTitle={isFavoritesPage ? "Add some favorites now" : ""}
+          buttonTitle={isFavoritesPage ? "Add some favorites now" : "Create a project now"}
           link={isFavoritesPage ? "/" : "/create-project"}
         />
       </section>
@@ -27,7 +27,9 @@ const ProjectsContent =  ({ data, isProjectPage }: Props) => {
   }
   return (
     <section className={cn("flexStart flex-col paddings mb-16 w-full")}>
-      <section className="projects-grid  w-full">
+      <section
+        className={cn("projects-grid  w-full")}
+      >
         {data?.map((project: ProjectInterface) => (
           <ProjectCard
             isProjectPage={isProjectPage}

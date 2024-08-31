@@ -27,7 +27,7 @@ export const authOptions: NextAuthOptions = {
       const email = session?.user?.email as string;
       try {
         await mongoConnect();
-        const data = (await getUser(email)) as { user?: UserProfile };
+        const data = (await getUser({ email })) as { user?: UserProfile };
         const newSession = {
           ...session,
           user: {
@@ -43,11 +43,9 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }) {
       try {
-        await mongoConnect()
+        await mongoConnect();
         if (!user.email || !user) return false;
-        const userExists = (await getUser(
-          user?.email as string
-        )) as UserProfile;
+        const userExists = await getUser({ email: user?.email });
 
         if (!userExists) {
           await createUser({

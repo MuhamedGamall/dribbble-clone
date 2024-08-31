@@ -7,18 +7,15 @@ import EmptyState from "./EmptyState";
 type Props = {
   userId: string;
   projectIdForIgnore: string;
-  projectsIds?: string[];
 };
 
 const RelatedProjects = async ({
   userId,
   projectIdForIgnore,
-  projectsIds,
 }: Props) => {
   const { projects, isLoading } = await getUserProjects({
     userId,
     projectIdForIgnore,
-    projectsIds,
     limit: 6,
   });
   if (projects?.length === 0) {

@@ -151,7 +151,7 @@ body,
   }
 
   /* Profile Projects */
-  .profile_projects {
+  .projects-grid {
     @apply grid xl:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8 mt-5;
   }
 }
@@ -161,7 +161,7 @@ body,
   height: 80px;
   background: linear-gradient(66deg, #e6fbfe 0%, #edddfb 100%);
 }
-.projects-grid {
+.projescts-grid {
   display: grid;
   grid-gap: 36px;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));

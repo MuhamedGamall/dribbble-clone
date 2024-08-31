@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema(
     description: { type: String, default: "", trim: true },
     githubUrl: { type: String, default: "", trim: true },
     linkedinUrl: { type: String, default: "", trim: true },
+    websiteUrl: { type: String, default: "", trim: true },
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
     seeing: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],

@@ -4,16 +4,21 @@ import Image from "next/image";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-import { convertFileToUrl } from "@/lib/utils";
+import { cn, convertFileToUrl } from "@/lib/utils";
 import { toast } from "sonner";
 import { UploadIcon } from "lucide-react";
 
 type FileUploaderProps = {
   file: File;
   onChange: (file: string) => void;
+  disabled?: boolean;
 };
 
-export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
+export const FileUploader = ({
+  file,
+  onChange,
+  disabled,
+}: FileUploaderProps) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles?.length > 1)
       return toast("Something went wrong.", {
@@ -48,6 +53,7 @@ export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     maxFiles: 1,
+    disabled,
     accept: {
       "image/png": [".png"],
       "image/jpeg": [".jpg", ".jpeg"],
@@ -58,8 +64,9 @@ export const FileUploader = ({ file, onChange }: FileUploaderProps) => {
   });
 
   return (
-    <div {...getRootProps()} className="file-upload">
+    <div {...getRootProps()} className={cn("file-upload",{'cursor-none':disabled})}>
       <input
+        disabled={disabled}
         {...getInputProps()}
         accept="image/png, image/jpeg, image/svg, image/webp, image/apng"
       />

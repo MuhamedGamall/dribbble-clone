@@ -1,24 +1,21 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { Form, FormControl } from "@/components/ui/form";
-import { z } from "zod";
+import BacktoHomeLink from "@/components/BacktoHomeLink";
+import Button from "@/components/Button";
 import CustomFormField, { FormFieldType } from "@/components/CustomFormField";
 import { FileUploader } from "@/components/FileUploader";
-import { categoryFilters } from "@/constant";
-import { toast } from "sonner";
-import Button from "@/components/Button";
+import { Form, FormControl } from "@/components/ui/form";
 import { SelectItem } from "@/components/ui/select";
+import { categoryFilters } from "@/constant";
 import { createProject, updateProject } from "@/lib/actions";
-import { useSession } from "next-auth/react";
-import { ProjectInterface, UserProfile } from "@/types";
-import { Session } from "next-auth";
-import BacktoHomeLink from "@/components/BacktoHomeLink";
-const strictUrlPattern =
-  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+import { ProjectInterface } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
 export const ProjectSchema = z.object({
   title: z
     .string()
@@ -118,11 +115,11 @@ export default function ProjectForm({
           fieldType={FormFieldType.SKELETON}
           control={form.control}
           name="image"
-          disabled={form.formState.isSubmitting}
+        
           label="Project poster"
           renderSkeleton={(field) => (
             <FormControl>
-              <FileUploader file={field.value} onChange={field.onChange} />
+              <FileUploader   disabled={form.formState.isSubmitting}  file={field.value} onChange={field.onChange} />
             </FormControl>
           )}
         />

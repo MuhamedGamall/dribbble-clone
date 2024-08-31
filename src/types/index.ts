@@ -25,6 +25,7 @@ export interface UserProfile {
   description: string | null;
   avatarUrl: string;
   githubUrl: string | null;
+  websiteUrl: string | null;
   linkedinUrl: string | null;
   seeing: string[];
   projects: string[];
@@ -41,6 +42,6 @@ export interface ProjectForm {
 }
 
 export interface CurrentSession {
-  user: UserProfile & { image: string };
+  user: UserProfile;
   expires: Date;
 }

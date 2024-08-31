@@ -2,7 +2,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { NavLinks } from "@/constant";
 
 import { signIn, useSession } from "next-auth/react";
 import Button from "./Button";
@@ -26,20 +25,20 @@ const Navbar = () => {
             <p className="bg-slate-200/50 py-3 rounded-[10px] w-[150px]" />
           ) : (
             <div className="flexCenter gap-4">
-              {session.status === "authenticated" ? (
-                <ProfileMenu session={session.data.user} />
-              ) : (
-                <Button
-                  iconWidth={25}
-                  leftIcon={
-                    "https://img.icons8.com/?size=100&id=17950&format=png&color=ffffff"
-                  }
-                  title={"Sign In"}
-                  handleClick={async () =>
-                    await signIn("google", { callbackUrl: "/" })
-                  }
-                />
-              )}
+              {/* {session.status === "authenticated" ? ( */}
+                <ProfileMenu session={session?.data?.user} />
+              {/* // ) : (
+              //   <Button
+              //     iconWidth={25}
+              //     leftIcon={
+              //       "https://img.icons8.com/?size=100&id=17950&format=png&color=ffffff"
+              //     }
+              //     title={"Sign In"}
+              //     handleClick={async () =>
+              //       await signIn("google", { callbackUrl: "/" })
+              //     }
+              //   />
+              // )} */}
             </div>
           )}
         </div>
