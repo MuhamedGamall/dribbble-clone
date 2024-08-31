@@ -207,7 +207,9 @@ export const fetchProjects = async ({
   try {
     await mongoConnect();
     const session = await getCurrentSession();
-    const favoritesIds = session?.user?.favorites;
+    const favoritesIds = session?.user?.favorites?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
 
     let filter = {} as any;
     let isLoading = true;
@@ -251,6 +253,9 @@ export const getProject = async (id: string, pathname: string) => {
     let isLoading = true;
     const session = await getCurrentSession();
     if (!session) throw new Error("Unauthorized");
+    const favoritesIds = session?.user?.favorites?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
 
     await mongoConnect();
 
@@ -258,7 +263,7 @@ export const getProject = async (id: string, pathname: string) => {
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
         $addFields: {
-          isFavorite: { $in: ["$_id", session?.user?.favorites || []] },
+          isFavorite: { $in: ["$_id", favoritesIds || []] },
         },
       },
     ]);
@@ -292,7 +297,9 @@ export const getUserProjects = async ({
 
     const session = await getCurrentSession();
     if (!userId) throw new Error("userId not found");
-
+    const favoritesIds = session?.user?.favorites?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
     const get_user = await getUser({ userId });
 
     if (!get_user) throw new Error("user not found");
@@ -313,7 +320,7 @@ export const getUserProjects = async ({
       },
       {
         $addFields: {
-          isFavorite: { $in: ["$_id", session?.user?.favorites || []] },
+          isFavorite: { $in: ["$_id", favoritesIds || []] },
         },
       },
       ...(limit > 0 ? [{ $limit: limit }] : []),
@@ -413,9 +420,10 @@ export const getFavorites = async () => {
     if (!session) throw new Error("Unauthorized");
     await mongoConnect();
 
-    const favorites = session.user.favorites;
-
-    const projects = await Project.find({ _id: { $in: favorites } });
+    const favoritesIds = session?.user?.favorites?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+    const projects = await Project.find({ _id: { $in: favoritesIds } });
 
     return parseStringify(projects);
   } catch (error: any) {

@@ -30,22 +30,17 @@ const ProjectCard = ({
 
   isProjectPage,
 }: Props) => {
-  const [isOptimisticFavorite, setOptimisticFavorite] = useState(isFavorite);
-  const [isOptimisticLikesCount, setOptimisticLikesCount] =
-    useState(likesCount);
   const [disabledFavBtn, setDisabledFavBtn] = useState(false);
   const pathname = usePathname();
+
   const toggleFav = async () => {
     try {
-      setOptimisticFavorite(!isOptimisticFavorite);
-      setOptimisticLikesCount(
-        isOptimisticFavorite ? likesCount - 1 : likesCount + 1
-      );
       setDisabledFavBtn(true);
       await toggleFavorite(_id, pathname);
       setDisabledFavBtn(false);
     } catch (error) {
-      setOptimisticFavorite(isOptimisticFavorite);
+      console.error(error);
+      setDisabledFavBtn(false);
     }
   };
 
@@ -77,7 +72,7 @@ const ProjectCard = ({
               <Loader2 size={15} className="animate-spin text-slate-700" />
             )}
             {!disabledFavBtn &&
-              (isOptimisticFavorite ? (
+              (isFavorite || isFavorite ? (
                 <HeartIcon
                   size={15}
                   fill="#ff474791"
@@ -108,7 +103,7 @@ const ProjectCard = ({
           <div className="flexCenter gap-3">
             <div className="flexCenter gap-2">
               <Image src="/hearth.svg" width={13} height={12} alt="heart" />
-              <p className="text-sm">{formatNumber(isOptimisticLikesCount)}</p>
+              <p className="text-sm">{formatNumber(likesCount)}</p>
             </div>
             <div className="flexCenter gap-2">
               <Image src="/eye.svg" width={12} height={9} alt="eye" />
