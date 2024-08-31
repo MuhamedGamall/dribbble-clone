@@ -49,10 +49,7 @@ const ProjectCard = ({
   return (
     <div className="flexCenter flex-col rounded-2xl  ">
       <div className="flexCenter group relative">
-        <Link
-          href={`/project/${_id}`}
-          className="min-w-[200px] aspect-[5/4.5] rounded-2xl bg-slate-200"
-        >
+        <Link href={`/project/${_id}`} className="rounded-2xl bg-slate-200">
           <Image
             loading="lazy"
             src={posterUrl}
