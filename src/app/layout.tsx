@@ -14,7 +14,7 @@ const fontSans = FontSans({
 
 export const metadata = {
   title: "Flexibble",
-  description: "Showcase and discover remarkable developer projects",
+  description: "Showcase and discover remarkable projects",
 };
 
 export default async function RootLayout({
