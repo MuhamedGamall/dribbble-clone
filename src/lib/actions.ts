@@ -76,7 +76,7 @@ export const getUser = async ({
         return null;
       }
 
-      return user as UserProfile | null;
+      return parseStringify(user) as UserProfile | null;
     }
     throw new Error("No user email or user id provided");
   } catch (error: any) {
@@ -129,7 +129,7 @@ export const createProject = async ({
     const updateUser = await User.findByIdAndUpdate(session.user._id, {
       $addToSet: { projects: newProject._id },
     });
-
+    revalidatePath("create-project", "page");
     return parseStringify(newProject) as ProjectInterface;
   } catch (error: any) {
     console.error("Error creating project:", error.message);
@@ -200,6 +200,8 @@ export const updateProject = async ({
         ...data,
       }
     );
+
+    revalidatePath("update-project", "page");
     const project = await findProject();
     return parseStringify(project) as ProjectInterface;
   } catch (error: any) {
@@ -211,9 +213,11 @@ export const updateProject = async ({
 export const fetchProjects = async ({
   searchQuery,
   favoritesOnly,
+  followingOnly,
 }: {
   searchQuery?: string;
   favoritesOnly?: boolean;
+  followingOnly?: boolean;
 }) => {
   try {
     await mongoConnect();
@@ -221,7 +225,10 @@ export const fetchProjects = async ({
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
-
+    const followingIds = session?.user?.following?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+    
     let filter = {} as any;
     let isLoading = true;
 
@@ -239,7 +246,10 @@ export const fetchProjects = async ({
     if (favoritesOnly) {
       filter._id = { $in: favoritesIds };
     }
-
+    if (followingOnly) {
+      
+      filter['creator._id'] = { $in: followingIds };
+    }
     const projects = await Project.aggregate([
       { $match: filter },
       {
@@ -307,15 +317,25 @@ export const getUserProjects = async ({
     let isLoading = true;
 
     const { session } = await getCurrentSession();
+
+    if (!session) {
+      throw new Error("Unauthorized");
+    }
+
     if (!userId) throw new Error("userId not found");
+
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
-    const get_user = await getUser({ userId });
+
+    const get_user = await getUser({
+      userId,
+    });
 
     if (!get_user) throw new Error("user not found");
 
-    const projectsIds = get_user.projects || [];
+    const projectsIds =
+      get_user.projects.map((el) => new mongoose.Types.ObjectId(el)) || [];
 
     if (!session) throw new Error("Unauthorized");
 
@@ -336,8 +356,8 @@ export const getUserProjects = async ({
       },
       ...(limit > 0 ? [{ $limit: limit }] : []),
     ]);
-    isLoading = false;
 
+    isLoading = false;
     return {
       projects: parseStringify(projects),
       isLoading,
@@ -397,7 +417,7 @@ export const toggleFavorite = async (id: string, pathname: string) => {
     const findProject = await Project.findById(id);
 
     if (!findProject) throw new Error("Project not found");
-    const favorites = userData.favorites.map(String) as string[];
+    const favorites = userData?.favorites?.map(String) as string[];
     const { ObjectId } = mongoose.Types;
 
     const updateId = new ObjectId(id);
@@ -424,24 +444,6 @@ export const toggleFavorite = async (id: string, pathname: string) => {
     throw error;
   }
 };
-export const getFavorites = async () => {
-  try {
-    const { session } = await getCurrentSession();
-
-    if (!session) throw new Error("Unauthorized");
-    await mongoConnect();
-
-    const favoritesIds = session?.user?.favorites?.map(
-      (id) => new mongoose.Types.ObjectId(id)
-    );
-    const projects = await Project.find({ _id: { $in: favoritesIds } });
-
-    return parseStringify(projects);
-  } catch (error: any) {
-    console.error("Error getting favorites: ", error.message);
-    throw error;
-  }
-};
 export const addProjectViewCount = async (id: string, pathname: string) => {
   try {
     const { session } = await getCurrentSession();
@@ -453,7 +455,7 @@ export const addProjectViewCount = async (id: string, pathname: string) => {
 
     if (!findProject) throw new Error("Project not found");
 
-    const userSeeingIds = session.user.seeing.map(String) as string[];
+    const userSeeingIds = session?.user?.seeing?.map(String) as string[];
     let status = null;
     if (!userSeeingIds.includes(id.toString())) {
       await User.findByIdAndUpdate(session.user._id, {
@@ -489,6 +491,75 @@ export const updateProfile = async (data: z.infer<typeof ProfileSchema>) => {
     revalidatePath("/profile/" + session.user._id, "page");
   } catch (error: any) {
     console.error("Error in updating profile:", error.message);
+    throw error;
+  }
+};
+export const toggleFollow = async (id: string, pathname: string) => {
+  try {
+    const { session } = await getCurrentSession();
+
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
+    const userData = (await getUser({ userId: id })) as any;
+    const followingIds = session?.user?.following?.map(String) as string[];
+
+    if (!userData) throw new Error("User you are trying to follow not found");
+    const { ObjectId } = mongoose.Types;
+
+    const updateId = new ObjectId(id);
+
+    let status = null;
+    if (followingIds.includes(id.toString())) {
+      status = await User.updateOne(
+        { _id: session.user._id, email: session?.user?.email },
+        { $pull: { following: updateId } }
+      );
+      await User.updateOne({ _id: updateId }, { $inc: { followersCount: -1 } });
+    } else {
+      status = await User.updateOne(
+        { _id: session.user._id, email: session?.user?.email },
+        { $addToSet: { following: updateId } }
+      );
+      await User.updateOne({ _id: updateId }, { $inc: { followersCount: 1 } });
+    }
+
+    revalidatePath(pathname || "/", "page");
+    return parseStringify(status) as any;
+  } catch (error: any) {
+    console.error("Error when toggle follow or unfollow:", error.message);
+    throw error;
+  }
+};
+export const getFollowing = async () => {
+  try {
+    let loading = true;
+    const { session } = await getCurrentSession();
+
+    if (!session) throw new Error("Unauthorized");
+    await mongoConnect();
+
+    const followingIds = session?.user?.following?.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+    const followingData = await User.aggregate([
+      {
+        $match: {
+          _id: { $in: followingIds },
+        },
+      },
+      {
+        $addFields: {
+          isFollowed: { $in: ["$_id", followingIds || []] },
+        },
+      },
+    ]);
+    loading = false;
+    return { followingData: parseStringify(followingData), loading } as {
+      followingData: UserProfile[] | [];
+      loading: boolean;
+    };
+  } catch (error: any) {
+    console.error("Error getting user iam following: ", error.message);
     throw error;
   }
 };

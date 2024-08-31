@@ -40,6 +40,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
         <div className="flex rounded-md border ">
           {props.iconSrc && (
             <Image
+              loading="lazy"
               src={props.iconSrc}
               height={24}
               width={24}

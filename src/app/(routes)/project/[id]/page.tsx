@@ -13,7 +13,7 @@ import ProjectActions from "./_components/ProjectActions";
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
   const { project, isLoading } = await getProject(id, "/project/" + id);
 
-  const {session} = await getCurrentSession();
+  const { session } = await getCurrentSession();
 
   if (!project) {
     return (
@@ -44,6 +44,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
             <div className="flex-1 flex items-start gap-5 w-full  max-xs:flex-col">
               <Link href={renderLink()}>
                 <Image
+                  loading="lazy"
                   src={project?.creator?.avatarUrl}
                   width={50}
                   height={50}
@@ -60,7 +61,13 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                   <Link href={renderLink()} className="capitalize">
                     {project?.creator?.name}
                   </Link>
-                  <Image src="/dot.svg" width={4} height={4} alt="dot" />
+                  <Image
+                    loading="lazy"
+                    src="/dot.svg"
+                    width={4}
+                    height={4}
+                    alt="dot"
+                  />
                   <Link
                     href={`/?q=${project?.category}`}
                     className="text-primary-purple font-semibold"
@@ -82,6 +89,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
           <section className="mt-14 mx-auto w-fit">
             <Link href={project?.posterUrl} target="_blank" rel="noreferrer">
               <Image
+                loading="lazy"
                 src={`${project?.posterUrl}`}
                 className="object-cover rounded-2xl"
                 width={1064}
@@ -105,6 +113,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                   className="flexCenter gap-2 tex-sm font-medium text-primary-purple"
                 >
                   <Image
+                    loading="lazy"
                     alt="github"
                     src={
                       "https://img.icons8.com/?size=100&id=16318&format=png&color=000000"
@@ -117,7 +126,14 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
               )}
 
               {project?.projectUrl && project?.githubUrl && (
-                <Image src="/dot.svg" width={4} height={4} alt="dot" />
+                <Image
+                  loading="lazy"
+
+                  src="/dot.svg"
+                  width={4}
+                  height={4}
+                  alt="dot"
+                />
               )}
               {project?.projectUrl && (
                 <Link
@@ -136,6 +152,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
             <span className="w-full h-0.5 bg-light-white-200" />
             <Link href={renderLink()} className="min-w-[82px] h-[82px]">
               <Image
+                loading="lazy"
                 src={project?.creator?.avatarUrl}
                 className="rounded-full"
                 width={82}

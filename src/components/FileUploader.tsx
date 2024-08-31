@@ -64,7 +64,10 @@ export const FileUploader = ({
   });
 
   return (
-    <div {...getRootProps()} className={cn("file-upload",{'cursor-none':disabled})}>
+    <div
+      {...getRootProps()}
+      className={cn("file-upload", { "cursor-none": disabled })}
+    >
       <input
         disabled={disabled}
         {...getInputProps()}
@@ -72,6 +75,7 @@ export const FileUploader = ({
       />
       {file ? (
         <Image
+          loading="lazy"
           src={file + ""}
           width={1000}
           height={1000}

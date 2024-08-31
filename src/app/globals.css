@@ -161,6 +161,10 @@ body,
   height: 80px;
   background: linear-gradient(66deg, #e6fbfe 0%, #edddfb 100%);
 }
+.searchButtons {
+  color:rgb(241, 237, 237);
+  background: linear-gradient(66deg, #e6fbfe 0%, #edddfb 100%);
+}
 .projescts-grid {
   display: grid;
   grid-gap: 36px;

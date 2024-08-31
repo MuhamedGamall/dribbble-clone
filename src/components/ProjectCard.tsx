@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { Skeleton } from "@/components/ui/skeleton";
 interface Props extends ProjectInterface {
   isProjectPage?: boolean;
   name: string;
@@ -49,8 +49,9 @@ const ProjectCard = ({
   return (
     <div className="flexCenter flex-col rounded-2xl  ">
       <div className="flexCenter group relative">
-        <Link href={`/project/${_id}`}>
+        <Link href={`/project/${_id}`} className="min-w-[270px] aspect-[5/4.5] rounded-2xl bg-slate-200">
           <Image
+            loading="lazy"
             src={posterUrl}
             width={414}
             height={314}
@@ -92,6 +93,7 @@ const ProjectCard = ({
           <Link href={`/profile/${userId}`}>
             <div className="flexCenter gap-2">
               <Image
+                loading="lazy"
                 src={avatarUrl}
                 width={24}
                 height={24}
@@ -104,11 +106,23 @@ const ProjectCard = ({
 
           <div className="flexCenter gap-3">
             <div className="flexCenter gap-2">
-              <Image src="/hearth.svg" width={13} height={12} alt="heart" />
+              <Image
+                loading="lazy"
+                src="/hearth.svg"
+                width={13}
+                height={12}
+                alt="heart"
+              />
               <p className="text-sm">{formatNumber(likesCount)}</p>
             </div>
             <div className="flexCenter gap-2">
-              <Image src="/eye.svg" width={12} height={9} alt="eye" />
+              <Image
+                loading="lazy"
+                src="/eye.svg"
+                width={12}
+                height={9}
+                alt="eye"
+              />
               <p className="text-sm">{formatNumber(viewership)}</p>
             </div>
           </div>
@@ -117,5 +131,21 @@ const ProjectCard = ({
     </div>
   );
 };
-
+ProjectCard.Skeleton = () => {
+  return (
+    <div className="p-4 shadow-sm  rounded-2xl  ">
+      <div className="  h-48 bg-slate-200 rounded-2xl"></div>
+      <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center space-x-2">
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="w-[100px] h-4 rounded-lg" />
+        </div>
+        <div className="flex items-center space-x-2 text-gray-500">
+          <Skeleton className="w-4 h-4" />
+          <Skeleton className="w-4 h-4" />
+        </div>
+      </div>
+    </div>
+  );
+};
 export default ProjectCard;

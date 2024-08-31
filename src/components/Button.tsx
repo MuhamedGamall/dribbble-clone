@@ -44,6 +44,7 @@ const Button = ({
   >
     {leftIcon && (
       <Image
+        loading="lazy"
         src={leftIcon}
         width={iconWidth || 14}
         height={iconWidth || 14}
@@ -53,6 +54,7 @@ const Button = ({
     {title}
     {rightIcon && (
       <Image
+        loading="lazy"
         src={rightIcon}
         width={iconWidth || 14}
         height={iconWidth || 14}

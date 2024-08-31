@@ -18,6 +18,8 @@ const UserSchema = new mongoose.Schema(
     projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
     seeing: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    followersCount: { type: Number, default: 0 },
   },
   {
     timestamps: true,

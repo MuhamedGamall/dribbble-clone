@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { signIn, useSession } from "next-auth/react";
 
 interface EmptyStateProps {
   title?: string;
@@ -25,6 +26,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   buttonTitle = "Create one now",
 }) => {
   const router = useRouter();
+  const session = useSession();
   return (
     <div
       className={cn(
@@ -40,7 +42,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       {!isRelatedProjects && showButton && (
         <div className="w-48 mt-4">
           <Button
-            onClick={() => router.push(link)}
+            onClick={() => {
+              if (session.status === "unauthenticated") {
+                signIn("google", { callbackUrl: link });
+                return;
+              }
+              router.push(link);
+            }}
             variant={"outline"}
             size={"lg"}
             className="w-48 mt-4"

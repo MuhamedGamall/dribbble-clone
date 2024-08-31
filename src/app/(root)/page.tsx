@@ -1,9 +1,7 @@
-import Categories from "@/components/Categories";
-import EmptyState from "@/components/EmptyState";
-import LoaderWrapper from "@/components/LoaderWrapper";
 import ProjectsContent from "@/components/ProjectsContent";
 import SearchBar from "@/components/SearchBar";
 import { fetchProjects } from "@/lib/actions";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -15,13 +13,10 @@ const Home = async ({
   searchParams: { q: string };
 }) => {
   const { projects, isLoading } = await fetchProjects({ searchQuery: q });
-
   return (
     <>
-      <LoaderWrapper isLoading={isLoading}>
-        <SearchBar />
-        <ProjectsContent data={projects} />
-      </LoaderWrapper>
+      <SearchBar />
+      <ProjectsContent loading={isLoading} data={projects} />
     </>
   );
 };

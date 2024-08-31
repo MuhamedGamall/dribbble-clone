@@ -27,6 +27,9 @@ export interface UserProfile {
   githubUrl: string | null;
   websiteUrl: string | null;
   linkedinUrl: string | null;
+  following: string[];
+  followersCount: number;
+  isFollowed: boolean;
   seeing: string[];
   projects: string[];
   favorites: string[];

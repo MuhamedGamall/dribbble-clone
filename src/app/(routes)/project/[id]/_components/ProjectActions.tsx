@@ -88,7 +88,13 @@ const ProjectActions = ({ projectId, isFavorite, isCreator }: Props) => {
             href={`/update-project/${projectId}`}
             className="flexCenter edit-action_btn"
           >
-            <Image src="/pencile.svg" width={15} height={15} alt="edit" />
+            <Image
+              loading="lazy"
+              src="/pencile.svg"
+              width={15}
+              height={15}
+              alt="edit"
+            />
           </Link>
 
           <button
@@ -103,7 +109,13 @@ const ProjectActions = ({ projectId, isFavorite, isCreator }: Props) => {
               <Loader2 size={15} className="animate-spin text-slate-700" />
             )}
             {!isDeleting && (
-              <Image src="/trash.svg" width={15} height={15} alt="delete" />
+              <Image
+                loading="lazy"
+                src="/trash.svg"
+                width={15}
+                height={15}
+                alt="delete"
+              />
             )}
           </button>
         </>

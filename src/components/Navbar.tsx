@@ -18,7 +18,13 @@ const Navbar = ({
         <div className="flexBetween   gap-4">
           <div className="flex-1 flexStart gap-10">
             <Link href="/">
-              <Image src="/logo.svg" width={116} height={43} alt="logo" />
+              <Image
+                loading="lazy"
+                src="/logo.svg"
+                width={116}
+                height={43}
+                alt="logo"
+              />
             </Link>
           </div>
 

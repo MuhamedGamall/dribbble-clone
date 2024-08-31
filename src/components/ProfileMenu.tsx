@@ -28,6 +28,7 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
         >
           {session?.image ? (
             <Image
+              loading="lazy"
               src={session?.image}
               width={40}
               height={40}
@@ -35,7 +36,7 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
               alt="user profile image"
             />
           ) : (
-            <User size={30} className=""/>
+            <User size={30} className="" />
           )}
           <span className="sr-only">Toggle user menu</span>
         </Button>
@@ -48,6 +49,7 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
           >
             {session?.image ? (
               <Image
+                loading="lazy"
                 src={session?.image}
                 width={40}
                 height={40}
@@ -107,6 +109,7 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
           >
             <span className="flex items-center gap-2">
               <Image
+                loading="lazy"
                 src={
                   "https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
                 }

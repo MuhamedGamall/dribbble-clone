@@ -3,13 +3,13 @@ import ProjectsContent from "@/components/ProjectsContent";
 import SearchBar from "@/components/SearchBar";
 import { fetchProjects } from "@/lib/actions";
 
-const FavoritesPage = async ({
+const FollowingPage = async ({
   searchParams: { q },
 }: {
   searchParams: { q: string };
 }) => {
   const { projects, isLoading } = await fetchProjects({
-    favoritesOnly: true,
+    followingOnly: true,
     searchQuery: q,
   });
 
@@ -21,4 +21,4 @@ const FavoritesPage = async ({
   );
 };
 
-export default FavoritesPage;
+export default FollowingPage;

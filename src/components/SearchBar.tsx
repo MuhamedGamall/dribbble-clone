@@ -4,6 +4,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Categories from "./Categories";
 import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export default function SearchBar({ q }: { q?: string | null | undefined }) {
   const router = useRouter();
@@ -38,7 +40,37 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
           <Search size={25} className="text-slate-300 " />
         </button>
       </form>
-      <div className="mt-[70px]" />
+      <div className="mt-[70px] " />
+
+      <div className=" flex item-center gap-2 mt-20 mx-auto w-fit">
+        <Button
+          onClick={() => router.push("/")}
+          variant="ghost"
+          className={cn(
+            "shadow-searchBar  px-5 md:px-8  rounded-md text-slate-600  transition-all",
+            {
+              "text-slate-800 bg-light-white-300 font-medium":
+                !["/favorites", "/following"].includes(pathname) &&
+                pathname.includes("/"),
+            }
+          )}
+        >
+          Explore
+        </Button>
+        <Button
+          onClick={() => router.push("/following")}
+          variant="ghost"
+          className={cn(
+            "shadow-searchBar px-5 md:px-8   text-slate-600 transition-all",
+            {
+              "text-slate-800 bg-light-white-300 font-medium":
+                pathname.includes("/following"),
+            }
+          )}
+        >
+          Following
+        </Button>
+      </div>
       <Categories />
     </div>
   );
