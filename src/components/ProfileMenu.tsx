@@ -20,11 +20,11 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
   const [open, setOpen] = useState(false);
   return (
     <DropdownMenu onOpenChange={setOpen} open={open}>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild className="">
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full  p-1 w-[60px] h-[60px]"
+          className="rounded-full hover:shadow-md  p-1 w-[60px] h-[60px] "
         >
           {session?.image ? (
             <Image
@@ -35,7 +35,7 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
               alt="user profile image"
             />
           ) : (
-            <User size={30} />
+            <User size={30} className=""/>
           )}
           <span className="sr-only">Toggle user menu</span>
         </Button>

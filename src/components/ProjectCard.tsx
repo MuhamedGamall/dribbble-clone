@@ -37,7 +37,9 @@ const ProjectCard = ({
     try {
       setDisabledFavBtn(true);
       await toggleFavorite(_id, pathname);
-      setDisabledFavBtn(false);
+      setTimeout(() => {
+        setDisabledFavBtn(false);
+      }, 500);
     } catch (error) {
       console.error(error);
       setDisabledFavBtn(false);
