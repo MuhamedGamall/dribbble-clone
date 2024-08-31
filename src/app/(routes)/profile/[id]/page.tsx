@@ -19,7 +19,7 @@ import Link from "next/link";
 import FollowingModal from "./_components/FollowingModal";
 import ToggleFollowButton from "./_components/ToggleFollowButton";
 import { UpdateProfileModel } from "./_components/UpdateProfile";
-import TooltipHover from "./_components/ToolribHover";
+import {TooltipHover} from "./_components/ToolribHover";
 
 type Props = {
   params: {

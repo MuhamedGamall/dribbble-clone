@@ -1,10 +1,11 @@
+'use client';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-export default function TooltipHover({
+export  function TooltipHover({
   children,
   label,
 }: {
