@@ -15,7 +15,7 @@ const FavoritesPage = async ({
 
   return (
     <>
-      <SearchBar />
+      <SearchBar q={q}/>
       <ProjectsContent data={projects} loading={isLoading} />
     </>
   );
