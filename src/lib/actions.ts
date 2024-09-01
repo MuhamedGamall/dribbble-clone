@@ -221,6 +221,9 @@ export const fetchProjects = async ({
 }) => {
   try {
     await mongoConnect();
+    let isLoading = true;
+
+    
     const { session } = await getCurrentSession();
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
@@ -230,7 +233,7 @@ export const fetchProjects = async ({
     );
     
     let filter = {} as any;
-    let isLoading = true;
+    
 
     if (searchQuery) {
       const regex = new RegExp(searchQuery, "i");
