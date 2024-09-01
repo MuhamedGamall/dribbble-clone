@@ -15,7 +15,7 @@ const FollowingPage = async ({
 
   return (
     <>
-      <SearchBar />
+      <SearchBar q={q}/>
       <ProjectsContent data={projects} loading={isLoading} />
     </>
   );
