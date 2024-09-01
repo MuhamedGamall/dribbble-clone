@@ -13,9 +13,15 @@ const Categories = () => {
 
   const handleTags = (item: string) => {
     if (item === categoryParam) {
-      router.push(pathname);
+      if(["/favorites", "/following"].includes(pathname)){ 
+        router.push(pathname)
+      }else router.push("/");
     } else {
-      router.push(`${pathname}/?q=${item}`);
+    
+
+        if(["/favorites", "/following"].includes(pathname)){ 
+        router.push(`${pathname}/?q=${item}`)
+      }else router.push(`/?q=${item}`)
     }
     router.refresh();
   };
