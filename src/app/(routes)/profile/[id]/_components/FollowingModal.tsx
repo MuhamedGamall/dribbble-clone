@@ -48,10 +48,10 @@ export default function FollowingModal({
           }
           
           
-          <div className="flex flex-col  gap-2 transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none rounded-md">
+          <div className="flex flex-col  gap-2  focus:outline-none rounded-md">
             {followingData?.length > 0 ? (
               followingData?.map((el) => (
-                <div className="flex items-center bordeer-b gap-2 rounded-md">
+                <div className="flex items-center bordeer-b gap-2 rounded-md  transition-colors hover:bg-accent hover:text-accent-foreground">
                   <DropdownMenuItem className="flex flex-[3] cursor-pointer items-center gap-2 rounded-md p-1 pr-3 text-sm font-medium ">
                     <Link
                       href={`/profile/${el?._id}`}
