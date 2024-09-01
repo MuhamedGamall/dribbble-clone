@@ -1,4 +1,4 @@
-# Flexibble - ##Dribbble Clone
+# Flexibble - Dribbble Clone
 
 A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextAuth, MongoDb, Cloudinary.
 
