@@ -33,7 +33,7 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
           name="search"
           onChange={(e) => setQuery(e.target.value)}
           value={query}
-          placeholder="Search..."
+          placeholder="Search By title, category or user"
           className="[&]:placeholder:text-slate-400  relative pl-5 focus-visible:ring-0 focus-visible:ring-offset-0 border-0 h-full w-full"
         />
         <button className="absolute right-5 top-1/2 -translate-y-1/2">
