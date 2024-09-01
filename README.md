@@ -1,33 +1,25 @@
-# Notion Clone
+# Flexibble
+---
 
-A fullstack Notion clone built with Next.js, React, Shadcn-UI, Tailwind, Clerk, Convex, and BlockNote.
+# Dribbble Clone
 
-## Landing page
-
-![Screenshot 1](https://github.com/MuhamedGamall/jotion/blob/master/public/Screenshot%20(147).png)
-## Editor
-
-![Screenshot 2](https://github.com/MuhamedGamall/jotion/blob/master/public/Screenshot%20(151).png)
+A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextAuth, MongoDb, Cloudinary.
 
 ## Features
 
-* 🔐 Authentication using Clerk
-* 📊 Real-time backend and database powered by Convex.dev
-* 🖼️ Upload images using convex storage
-* 📝 Create and edit notes using BlockNote editor
-* 🙂 Emojis using Emoji Picker React
-* 🌲 Create hierarchies of notes
-* 🗑️ Archive, restore, and delete notes
-* 📢 Publish notes to share with others
-* ⬅️ Adjustable sidebar
-* ✨ Responsive UI and light/dark mode built with Tailwind and shadcn/ui
+* 🔐 Authentication using NextAuth
+* 📊 backend and database powered by MongoDb
+* 🖼️ Upload images using Cloudinary
+* 📝 Create, edit and delete Projects
+* ✨ Responsive UI Tailwind and shadcn/ui
+* 👍🏻 Likes and Views Functionality
 
 ## Getting Started
 
 ### Clone the repo
 
 ```bash
-git clone https://github.com/MuhamedGamall/jotion.git
+git clone https://github.com/MuhamedGamall/dribbble-clone
 ```
 
 ### Install dependencies
@@ -39,25 +31,25 @@ npm install
 ### Setup .env file
 
 ```env
-# Convex
-CONVEX_DEPLOYMENT=
-NEXT_PUBLIC_CONVEX_URL=
+# mongodb
+DATABASE_URL=
 
-# Clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-CLERK_WEBHOOK_SECRET=
-CLERK_PUBLIC_CLERK_SIGN_UP_URL=
-CLERK_PUBLIC_CLERK_SIGN_IN_URL=
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=
+# nextauth
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
 
-```
+# GOOGLE
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-### Start Convex
+# CLOUDUNARY
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+CLOUDINARY_URL=
+# app
+NEXT_PUBLIC_APP_URL=
 
-```bash
-npx convex dev
 ```
 
 ### Start the app
