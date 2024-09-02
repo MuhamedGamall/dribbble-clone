@@ -9,6 +9,7 @@ import LoaderWrapper from "@/components/LoaderWrapper";
 import RelatedProjects from "@/components/RelatedProjects";
 import { getCurrentSession, getProject } from "@/lib/actions";
 import ProjectActions from "./_components/ProjectActions";
+import ToggleFollowButton from "../../profile/[id]/_components/ToggleFollowButton";
 
 const Project = async ({ params: { id } }: { params: { id: string } }) => {
   const { project, isLoading } = await getProject(id, "/project/" + id);
@@ -57,17 +58,32 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 <p className="self-start text-lg font-semibold">
                   {project?.title}
                 </p>
-                <div className="user-info">
-                  <Link href={renderLink()} className="capitalize">
-                    {project?.creator?.name}
-                  </Link>
-                  <Image
-                    loading="lazy"
-                    src="/dot.svg"
-                    width={4}
-                    height={4}
-                    alt="dot"
-                  />
+                <div className="flex  w-full gap-2 flex-col">
+                  <div className="user-info">
+                    <Link href={renderLink()}  className="capitalize">
+                      {project?.creator?.name}
+                    </Link>
+                    {session?.user?._id !== project?.creator?._id && (
+                      <>
+                        <Image
+                          loading="lazy"
+                          src="/dot.svg"
+                          width={4}
+                          height={4}
+                          alt="dot"
+                        />
+                        <ToggleFollowButton userId={project?.creator?._id}>
+                          {session?.user?.following?.includes(
+                            project?.creator?._id
+                          ) ? (
+                            <button className="text-red-500">Unfollow</button>
+                          ) : (
+                            <button className=" text-green-600">Follow</button>
+                          )}
+                        </ToggleFollowButton>
+                      </>
+                    )}
+                  </div>
                   <Link
                     href={`/?q=${project?.category}`}
                     className="text-primary-purple font-semibold"
@@ -77,7 +93,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end items-center gap-2">
+            <div className="flex justify-end max-xs:w-full items-center gap-2">
               <ProjectActions
                 projectId={project?._id}
                 isFavorite={project?.isFavorite}
@@ -128,7 +144,6 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
               {project?.projectUrl && project?.githubUrl && (
                 <Image
                   loading="lazy"
-
                   src="/dot.svg"
                   width={4}
                   height={4}

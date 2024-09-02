@@ -223,7 +223,6 @@ export const fetchProjects = async ({
     await mongoConnect();
     let isLoading = true;
 
-    
     const { session } = await getCurrentSession();
     const favoritesIds = session?.user?.favorites?.map(
       (id) => new mongoose.Types.ObjectId(id)
@@ -231,9 +230,8 @@ export const fetchProjects = async ({
     const followingIds = session?.user?.following?.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
-    
+
     let filter = {} as any;
-    
 
     if (searchQuery) {
       const regex = new RegExp(searchQuery, "i");
@@ -250,8 +248,7 @@ export const fetchProjects = async ({
       filter._id = { $in: favoritesIds };
     }
     if (followingOnly) {
-      
-      filter['creator._id'] = { $in: followingIds };
+      filter["creator._id"] = { $in: followingIds };
     }
     const projects = await Project.aggregate([
       { $match: filter },
@@ -261,6 +258,7 @@ export const fetchProjects = async ({
         },
       },
     ]);
+
     isLoading = false;
 
     return {

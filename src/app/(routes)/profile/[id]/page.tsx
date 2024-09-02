@@ -52,9 +52,30 @@ const UserProfile = async ({ params }: Props) => {
                   Followers ({formatNumber(result?.user?.followersCount)})
                 </span>
               </div>
-              <p className="text-4xl font-bold mt-5 max-w-lg  capitalize">
-                {result?.user?.name}
-              </p>
+              <div className="flex items-center gap-3 mt-5 ">
+                <span className="text-4xl block font-bold max-w-lg  capitalize">
+                  {result?.user?.name}
+                </span>
+
+                {session?.user?._id !== params?.id && (
+                  <>
+                    <Image
+                      loading="lazy"
+                      src="/dot.svg"
+                      width={5}
+                      height={5}
+                      alt="dot"
+                    />
+                    <ToggleFollowButton userId={params?.id}>
+                      {session?.user?.following?.includes(params?.id) ? (
+                        <button className="text-red-500">Unfollow</button>
+                      ) : (
+                        <button className="text-green-600">Follow</button>
+                      )}
+                    </ToggleFollowButton>
+                  </>
+                )}
+              </div>
               {(result?.user?.githubUrl ||
                 result?.user?.linkedinUrl ||
                 result?.user?.websiteUrl) && (

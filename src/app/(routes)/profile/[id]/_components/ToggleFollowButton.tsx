@@ -32,12 +32,9 @@ export default function ToggleFollowButton({
   };
 
   return loading ? (
-    <Button
-      disabled={loading}
-      className="gap-1 items-center  hover:bg-slate-300/50   bg-light-white-400/50  text-black-100"
-    >
+    <button className="gap-1 flex items-center rounded-full  hover:bg-slate-300/50   bg-light-white-400/50  text-black-100">
       <Loader2 className="w-4 h-4 animate-spin" />
-    </Button>
+    </button>
   ) : (
     <div onClick={handleFollowing} className=" ">
       {children}

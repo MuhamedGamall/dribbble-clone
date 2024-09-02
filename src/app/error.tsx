@@ -9,7 +9,7 @@ export default function Error() {
     <div className="h-screen  flex flex-col justify-center items-center space-y-4">
       <h2 className="text-xl font-medium">Something went wrong!</h2>
       <Button asChild variant={"outline"} size={"lg"}>
-        <Link href="/">Go back</Link>
+        <Link href="/" >Go back</Link>
       </Button>
     </div>
   );

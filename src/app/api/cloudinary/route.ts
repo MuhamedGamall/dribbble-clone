@@ -1,8 +1,4 @@
-import { getCurrentSession } from "@/lib/actions";
-import { authOptions } from "@/lib/session";
 import { v2 as cloudinary } from "cloudinary";
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -66,9 +62,10 @@ export async function PUT(req: NextRequest) {
       use_filename: true,
       unique_filename: false,
       overwrite: true,
+      format: "webp", 
       transformation: [
-        { format: "webp" },
         { width: 1000, height: 752, crop: "fit" },
+        { quality: "auto:good" }, 
       ],
     };
 
@@ -89,8 +86,7 @@ export async function PUT(req: NextRequest) {
 }
 export async function DELETE(req: NextRequest) {
   try {
-
-    const deleteImageId =  req.nextUrl.searchParams.get("id");
+    const deleteImageId = req.nextUrl.searchParams.get("id");
 
     if (!deleteImageId) {
       return NextResponse.json(
