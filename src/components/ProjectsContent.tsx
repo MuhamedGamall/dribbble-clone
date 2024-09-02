@@ -36,6 +36,7 @@ const ProjectsContent = ({ data, isProjectPage, loading }: Props) => {
           {!loading
             ? data?.map((project: ProjectInterface) => (
                 <ProjectCard
+                  loading={loading}
                   isProjectPage={isProjectPage}
                   key={`${project?._id}`}
                   {...project}

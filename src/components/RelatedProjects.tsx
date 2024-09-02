@@ -51,7 +51,7 @@ const RelatedProjects = async ({
         </Link>
       </div>
 
-      <ProjectsContent data={projects} isProjectPage />
+      <ProjectsContent data={projects} isProjectPage loading={isLoading} />
     </section>
   );
 };

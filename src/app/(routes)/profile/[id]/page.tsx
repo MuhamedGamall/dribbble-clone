@@ -22,7 +22,7 @@ type Props = {
 };
 
 const UserProfile = async ({ params }: Props) => {
-  const result = await getUserProjects({ userId: params?.id });
+  const {isLoading,projects,user} = await getUserProjects({ userId: params?.id });
   const { session } = await getCurrentSession();
   const { followingData, loading } = await getFollowing();
 
@@ -35,26 +35,26 @@ const UserProfile = async ({ params }: Props) => {
               className={cn(
                 "flex  items-start flex-col w-full max-md:items-center max-md:text-center",
                 {
-                  "items-center text-center": result?.projects?.length === 0,
+                  "items-center text-center": projects?.length === 0,
                 }
               )}
             >
               <div className="flex gap-5 items-end">
                 <Image
                   loading="lazy"
-                  src={result?.user?.avatarUrl}
+                  src={user?.avatarUrl}
                   width={100}
                   height={100}
                   className="rounded-full "
                   alt="user image"
                 />
                 <span className="rounded-md font-semibold  bg-slate-100 px-3 py-1">
-                  Followers ({formatNumber(result?.user?.followersCount)})
+                  Followers ({formatNumber(user?.followersCount)})
                 </span>
               </div>
               <div className="flex items-center gap-3 mt-5 ">
                 <span className="text-4xl block font-bold max-w-lg  capitalize">
-                  {result?.user?.name}
+                  {user?.name}
                 </span>
 
                 {session?.user?._id !== params?.id && (
@@ -76,14 +76,14 @@ const UserProfile = async ({ params }: Props) => {
                   </>
                 )}
               </div>
-              {(result?.user?.githubUrl ||
-                result?.user?.linkedinUrl ||
-                result?.user?.websiteUrl) && (
+              {(user?.githubUrl ||
+                user?.linkedinUrl ||
+                user?.websiteUrl) && (
                 <ul className="flex items-center gap-3 mt-5 flex-wrap [&>li]:shadow-sm">
-                  {result?.user?.githubUrl && (
+                  {user?.githubUrl && (
                     <li>
                       <TooltipHover label="Gethub Link">
-                        <Link href={result?.user?.githubUrl} target="_blank">
+                        <Link href={user?.githubUrl} target="_blank">
                           <svg
                             className="border rounded-sm p-1"
                             xmlns="http://www.w3.org/2000/svg"
@@ -99,10 +99,10 @@ const UserProfile = async ({ params }: Props) => {
                       </TooltipHover>
                     </li>
                   )}
-                  {result?.user?.linkedinUrl && (
+                  {user?.linkedinUrl && (
                     <li>
                       <TooltipHover label="LinkedIn Link">
-                        <Link href={result?.user?.linkedinUrl} target="_blank">
+                        <Link href={user?.linkedinUrl} target="_blank">
                           <Linkedin
                             size={30}
                             className=" border rounded-sm p-1"
@@ -111,10 +111,10 @@ const UserProfile = async ({ params }: Props) => {
                       </TooltipHover>
                     </li>
                   )}
-                  {result?.user?.websiteUrl && (
+                  {user?.websiteUrl && (
                     <li>
                       <TooltipHover label="Website Link">
-                        <Link href={result?.user?.websiteUrl} target="_blank">
+                        <Link href={user?.websiteUrl} target="_blank">
                           <LucideLink2
                             size={30}
                             className="border rounded-sm p-1"
@@ -126,7 +126,7 @@ const UserProfile = async ({ params }: Props) => {
                 </ul>
               )}
               <p className="md:text-5xl text-3xl  font-extrabold md:mt-10 mt-5 max-w-lg">
-                {result?.user?.description ||
+                {user?.description ||
                   "I’m Software Engineer at Microsoft 👋"}
               </p>
 
@@ -160,7 +160,7 @@ const UserProfile = async ({ params }: Props) => {
                         )}
                       </Button>
                     </ToggleFollowButton>
-                    <Link href={`mailto:${result?.user?.email}`}>
+                    <Link href={`mailto:${user?.email}`}>
                       <Button className="bg-primary-purple gap-1 items-center hover:opacity-[0.7]">
                         <Image
                           loading="lazy"
@@ -177,10 +177,10 @@ const UserProfile = async ({ params }: Props) => {
               </div>
             </div>
 
-            {result?.user?.projects?.length > 0 && (
+            {user?.projects?.length > 0 && (
               <Image
                 loading="lazy"
-                src={result?.projects?.[0]?.posterUrl}
+                src={projects?.[0]?.posterUrl}
                 alt="project image"
                 width={739}
                 height={554}
@@ -194,7 +194,7 @@ const UserProfile = async ({ params }: Props) => {
               Recent Work
             </p>
 
-            <ProjectsContent data={result?.projects} />
+            <ProjectsContent data={projects} loading={isLoading} />
           </section>
         </section>
       </Container>

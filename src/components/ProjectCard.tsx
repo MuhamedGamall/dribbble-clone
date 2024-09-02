@@ -15,6 +15,7 @@ interface Props extends ProjectInterface {
   avatarUrl: string;
   userId: string;
   isFavorite: boolean;
+  loading?: boolean;
 }
 
 const ProjectCard = ({
@@ -27,7 +28,7 @@ const ProjectCard = ({
   isFavorite,
   avatarUrl,
   userId,
-
+  loading = false,
   isProjectPage,
 }: Props) => {
   const [disabledFavBtn, setDisabledFavBtn] = useState(false);
