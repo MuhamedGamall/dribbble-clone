@@ -6,7 +6,7 @@ A fullstack Dribbble clone built with Next.js, React, TypeScript, Shadcn-UI, Tai
 
 
 * 🔐 Authentication using NextAuth
-* 📊 backend and database powered by MongoDb
+* 📊 backend and database powered by MongoDb and real-time updates
 * 🖼️ Upload images using Cloudinary
 * 📝 Create, edit and delete Projects
 * 🔍 Search and category functionalities 
