@@ -13,9 +13,9 @@ const Navbar = ({
   loading: boolean;
 }) => {
   return (
-    <nav className=" navbar ">
-      <Container>
-        <div className="flexBetween   gap-4">
+    <nav className="  navbar">
+      <Container className="  w-full ">
+        <div className="flexBetween gap-4">
           <div className="flex-1 flexStart gap-10">
             <Link href="/">
               <Image

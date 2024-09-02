@@ -6,6 +6,7 @@ import Categories from "./Categories";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function SearchBar({ q }: { q?: string | null | undefined }) {
   const router = useRouter();
@@ -23,10 +24,28 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
   };
   return (
     <div className="w-full relative">
-      <div className="background-bar " />
+      <div className="background-bar sm:hidden " />
+      <div className="flex items-center max-sm:hidden justify-center w-full bg-[#fe507f] relative">
+        <Image
+          alt="cover search"
+          width={400}
+          loading="lazy"
+          height={236}
+          src="/search-header-620-e087a00b80a13bfbc4705b2eb9e6d3de0bd542009eb93f5a7e7ee5774e978c63.webp"
+          className="w-fit "
+        />
+        <div className=" text-white flex flex-col items-center justify-center gap-3 absolute top-2/4 left-2/4 -translate-x-2/4 -translate-y-2/4">
+          <div className=" font-bold text-center text-[30px] md:text-[40px]">
+            Search Flexibble
+          </div>
+          <p className="text-[15px] md:text-[20px] break-all font-semibold text-center">
+            24,700,000+ images from thousands of inspirational designers
+          </p>
+        </div>
+      </div>
       <form
         onSubmit={(e) => handleSearch(e)}
-        className="absolute  left-[50%] rounded-2xl overflow-hidden  shadow-searchBar top-[50px] -translate-x-[50%]  max-w-[628px] w-[90%]  h-[64px] "
+        className="absolute  left-[50%] rounded-2xl overflow-hidden  shadow-searchBar bottom-[165px] -translate-x-[50%]  max-w-[628px] w-[90%]  h-[64px] "
       >
         <Input
           type="text"

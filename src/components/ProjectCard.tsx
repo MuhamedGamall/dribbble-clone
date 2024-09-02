@@ -3,7 +3,7 @@
 import { toggleFavorite } from "@/lib/actions";
 import { cn, formatNumber } from "@/lib/utils";
 import { ProjectInterface } from "@/types";
-import { Heart, HeartIcon, Loader, Loader2 } from "lucide-react";
+import { Eye, Heart, HeartIcon, Loader, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -106,25 +106,17 @@ const ProjectCard = ({
           </Link>
 
           <div className="flexCenter gap-3">
-            <div className="flexCenter gap-2">
-              <Image
-                loading="lazy"
-                src="/hearth.svg"
-                width={13}
-                height={12}
-                alt="heart"
-              />
-              <p className="text-sm">{formatNumber(likesCount)}</p>
+            <div className="flexCenter gap-1">
+              <Eye size={13}  className="text-[#9e9ea7]" />
+              <p className="text-[10px] text-[#9e9ea7] font-semibold">
+                {formatNumber(likesCount)}
+              </p>
             </div>
-            <div className="flexCenter gap-2">
-              <Image
-                loading="lazy"
-                src="/eye.svg"
-                width={12}
-                height={9}
-                alt="eye"
-              />
-              <p className="text-sm">{formatNumber(viewership)}</p>
+            <div className="flexCenter gap-1">
+              <HeartIcon size={13} fill="#9e9ea7" className="text-[#9e9ea7]" />
+              <p className="text-[10px] text-[#9e9ea7] font-semibold">
+                {formatNumber(viewership)}
+              </p>
             </div>
           </div>
         </div>

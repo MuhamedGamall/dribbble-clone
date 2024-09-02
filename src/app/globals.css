@@ -120,7 +120,7 @@ body,
 
   /* Navbar */
   .navbar {
-    @apply py-5 px-8 border-b border-nav-border;
+    @apply py-5 h-[80px] flex items-center  w-full px-5 border-b border-nav-border;
   }
 
   /* Profile Menu */
