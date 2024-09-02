@@ -1,14 +1,15 @@
 "use client";
 
-import { toggleFavorite } from "@/lib/actions";
+import { Skeleton } from "@/components/ui/skeleton";
+import { deleteProject, toggleFavorite } from "@/lib/actions";
 import { cn, formatNumber } from "@/lib/utils";
 import { ProjectInterface } from "@/types";
-import { Eye, Heart, HeartIcon, Loader, Loader2 } from "lucide-react";
+import { Edit, Eye, HeartIcon, Loader2, Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 interface Props extends ProjectInterface {
   isProjectPage?: boolean;
   name: string;
@@ -16,6 +17,7 @@ interface Props extends ProjectInterface {
   userId: string;
   isFavorite: boolean;
   loading?: boolean;
+  userEmail: string;
 }
 
 const ProjectCard = ({
@@ -28,12 +30,33 @@ const ProjectCard = ({
   isFavorite,
   avatarUrl,
   userId,
+  userEmail,
   loading = false,
   isProjectPage,
 }: Props) => {
   const [disabledFavBtn, setDisabledFavBtn] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const session = useSession() as any;
+  const router = useRouter();
   const pathname = usePathname();
+  const isCreator =
+    session?.data?.user?.email === userEmail &&
+    session?.data?.user?._id.toString() === userId.toString();
+  const handleDeleteProject = async () => {
+    if (!isCreator) return;
 
+    setIsDeleting(true);
+
+    try {
+      await deleteProject(_id).then(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   const toggleFav = async () => {
     try {
       setDisabledFavBtn(true);
@@ -60,7 +83,28 @@ const ProjectCard = ({
             alt="project image"
           />
         </Link>
+        {isCreator && pathname.includes("/profile") && (
+          <div className="absolute top-5 right-5 items-center gap-2 group-hover:flex hidden transition-all">
+            <Link
+              href={`/update-project/${_id}`}
+              className="flexCenter edit-action_btn  !bg-slate-100/40 !p-2"
+            >
+              <Edit size={15} className="text-slate-900 " />
+            </Link>
 
+            <button
+              type="button"
+              disabled={isDeleting}
+              className={`flexCenter delete-action_btn !bg-red-300/40 !p-2`}
+              onClick={handleDeleteProject}
+            >
+              {isDeleting && (
+                <Loader2 size={15} className="animate-spin text-slate-700" />
+              )}
+              {!isDeleting && <Trash2 size={15} className="text-slate-900 " />}
+            </button>
+          </div>
+        )}
         <div className="hidden group-hover:flex profile_card-title items-center justify-between ">
           <p className="w-full truncate ">{title}</p>
           <button
@@ -107,7 +151,7 @@ const ProjectCard = ({
 
           <div className="flexCenter gap-3">
             <div className="flexCenter gap-1">
-              <Eye size={13}  className="text-[#9e9ea7]" />
+              <Eye size={13} className="text-[#9e9ea7]" />
               <p className="text-[10px] text-[#9e9ea7] font-semibold">
                 {formatNumber(likesCount)}
               </p>

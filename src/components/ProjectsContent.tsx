@@ -43,6 +43,7 @@ const ProjectsContent = ({ data, isProjectPage, loading }: Props) => {
                   name={project?.creator?.name}
                   avatarUrl={project?.creator?.avatarUrl}
                   userId={project?.creator?._id}
+                  userEmail={project?.creator?.email}
                 />
               ))
             : Array.from({ length: 8 })?.map((_, i) => (

@@ -109,14 +109,14 @@ const ProfileMenu = ({ session }: { session: Session | any }) => {
           >
             <span className="flex items-center gap-2">
               <Image
-                loading="lazy"
                 src={
                   "https://img.icons8.com/?size=100&id=17949&format=png&color=000000"
                 }
                 width={30}
                 height={30}
+                priority={true}
                 alt="google icon"
-              />{" "}
+              />
               Log In with Google
             </span>
           </DropdownMenuItem>

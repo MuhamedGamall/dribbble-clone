@@ -19,8 +19,8 @@ const Navbar = ({
           <div className="flex-1 flexStart gap-10">
             <Link href="/">
               <Image
-                loading="lazy"
                 src="/logo.svg"
+                priority={true}
                 width={116}
                 height={43}
                 alt="logo"

@@ -29,8 +29,8 @@ export default function SearchBar({ q }: { q?: string | null | undefined }) {
         <Image
           alt="cover search"
           width={400}
-          loading="lazy"
           height={236}
+          priority={true}
           src="/search-header-620-e087a00b80a13bfbc4705b2eb9e6d3de0bd542009eb93f5a7e7ee5774e978c63.webp"
           className="w-fit "
         />
