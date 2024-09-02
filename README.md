@@ -2,11 +2,8 @@
 
 A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextAuth, MongoDb, Cloudinary.
 
-## Search
-
-![image-one](https://github.com/MuhamedGamall/dribbble-clone/public/one.png)
-
 ## Features
+
 
 * 🔐 Authentication using NextAuth
 * 📊 backend and database powered by MongoDb
@@ -15,6 +12,21 @@ A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextA
 * 🔍 Search and category functionalities 
 * ✨ Responsive UI Tailwind and shadcn/ui
 * 👍🏻 Likes and Views functionalities
+
+## Search Page
+<img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/one.png" width="400px" />
+
+## Profile Page
+<img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/two.png" width="400px" />
+
+## Project Page
+<img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/three.png" width="400px" />
+
+## Update Project Page
+<img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/four.png" width="400px" />
+
+## Create Project Page
+<img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/five.png" width="400px" />
 
 ## Getting Started
 
