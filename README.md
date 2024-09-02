@@ -2,6 +2,10 @@
 
 A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextAuth, MongoDb, Cloudinary.
 
+## Search
+
+![image-one](https://github.com/MuhamedGamall/dribbble-clone/public/one.png)
+
 ## Features
 
 * 🔐 Authentication using NextAuth
