@@ -59,7 +59,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                   {project?.title}
                 </p>
                 <div className="flex  w-full gap-2 flex-col">
-                  <div className="user-info">
+                  <div className="user-info xs:flex-row flex-col justify-start xs:justify-center">
                     <Link href={renderLink()}  className="capitalize">
                       {project?.creator?.name}
                     </Link>
@@ -71,6 +71,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
                           width={4}
                           height={4}
                           alt="dot"
+                          className="xs:block hidden"
                         />
                         <ToggleFollowButton userId={project?.creator?._id}>
                           {session?.user?.following?.includes(
