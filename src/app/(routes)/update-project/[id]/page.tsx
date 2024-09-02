@@ -10,6 +10,8 @@ const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
     return (
       <section className="flexStart flex-col paddings">
         <EmptyState
+          showButton
+          buttonTitle="Back to home"
           title="Failed to fetch project info"
           subtitle="No project found"
         />
@@ -20,7 +22,7 @@ const EditProject = async ({ params: { id } }: { params: { id: string } }) => {
   return (
     <LoaderWrapper isLoading={isLoading}>
       <section className="mb-10">
-        <Container>
+        <Container className="!px-10">
           <h3 className="head-text my-10 md:!w-fit md:mx-auto">
             Update Project
           </h3>

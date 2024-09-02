@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 interface Props extends ProjectInterface {
   isProjectPage?: boolean;
   name: string;
@@ -69,6 +69,7 @@ const ProjectCard = ({
       setDisabledFavBtn(false);
     }
   };
+  const [randomLikes, setRandomLikes] = useState(0);
 
   return (
     <div className="flexCenter flex-col rounded-2xl  ">
@@ -151,13 +152,13 @@ const ProjectCard = ({
 
           <div className="flexCenter gap-3">
             <div className="flexCenter gap-1">
-              <Eye size={13} className="text-[#9e9ea7]" />
+              <HeartIcon size={13} fill="#9e9ea7" className="text-[#9e9ea7]" />
               <p className="text-[10px] text-[#9e9ea7] font-semibold">
                 {formatNumber(likesCount)}
               </p>
             </div>
             <div className="flexCenter gap-1">
-              <HeartIcon size={13} fill="#9e9ea7" className="text-[#9e9ea7]" />
+              <Eye size={13} className="text-[#9e9ea7]" />
               <p className="text-[10px] text-[#9e9ea7] font-semibold">
                 {formatNumber(viewership)}
               </p>

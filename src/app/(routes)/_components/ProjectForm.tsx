@@ -79,6 +79,7 @@ export default function ProjectForm({
           data: values,
         }).then(() => {
           toast("Project created successfully.");
+          form.setValue('category','')
           return form.reset();
         });
       }

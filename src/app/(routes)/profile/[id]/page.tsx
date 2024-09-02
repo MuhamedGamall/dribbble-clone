@@ -14,6 +14,7 @@ import FollowingModal from "./_components/FollowingModal";
 import ToggleFollowButton from "./_components/ToggleFollowButton";
 import { UpdateProfileModel } from "./_components/UpdateProfile";
 import { TooltipHover } from "./_components/TooltibHover";
+import LoaderWrapper from "@/components/LoaderWrapper";
 
 type Props = {
   params: {
@@ -22,12 +23,14 @@ type Props = {
 };
 
 const UserProfile = async ({ params }: Props) => {
-  const {isLoading,projects,user} = await getUserProjects({ userId: params?.id });
+  const { isLoading, projects, user } = await getUserProjects({
+    userId: params?.id,
+  });
   const { session } = await getCurrentSession();
   const { followingData, loading } = await getFollowing();
 
   return (
-    <>
+    <LoaderWrapper isLoading={loading || isLoading}>
       <Container>
         <section className="flexCenter flex-col  w-full mx-auto paddings">
           <section className="flexBetween max-md:flex-col gap-10 w-full">
@@ -76,9 +79,7 @@ const UserProfile = async ({ params }: Props) => {
                   </>
                 )}
               </div>
-              {(user?.githubUrl ||
-                user?.linkedinUrl ||
-                user?.websiteUrl) && (
+              {(user?.githubUrl || user?.linkedinUrl || user?.websiteUrl) && (
                 <ul className="flex items-center gap-3 mt-5 flex-wrap [&>li]:shadow-sm">
                   {user?.githubUrl && (
                     <li>
@@ -125,9 +126,8 @@ const UserProfile = async ({ params }: Props) => {
                   )}
                 </ul>
               )}
-              <p className="md:text-5xl text-3xl  font-extrabold md:mt-10 mt-5 max-w-lg">
-                {user?.description ||
-                  "I’m Software Engineer at Microsoft 👋"}
+              <p className="md:text-5xl text-3xl font-extrabold md:mt-10 mt-5 max-w-lg">
+                {user?.description || "I’m Software Engineer at Microsoft 👋"}
               </p>
 
               <div className="flex mt-8 gap-5 w-fit max-md:justify-center flex-wrap">
@@ -201,7 +201,7 @@ const UserProfile = async ({ params }: Props) => {
       {session?.user?._id === params?.id && (
         <FollowingModal followingData={followingData} />
       )}
-    </>
+    </LoaderWrapper>
   );
 };
 

@@ -1,3 +1,4 @@
+import { CopyrightIcon } from "lucide-react";
 import Image from "next/image";
 
 const dateNow = new Date().getFullYear();
@@ -21,9 +22,11 @@ const Footer = () => (
     </div>
 
     <div className="flexBetween footer_copyright">
-      <p>@ {dateNow} Flexibble. All rights reserved</p>
+      <p className="flex items-center gap-1">
+        <CopyrightIcon size={12}/> {dateNow} Flexibble. All rights reserved
+      </p>
       <p className="text-gray">
-        <span className="text-black font-semibold">10,214</span> projects
+        <span className="text-black font-semibold">24,700,000+</span> projects
         submitted
       </p>
     </div>

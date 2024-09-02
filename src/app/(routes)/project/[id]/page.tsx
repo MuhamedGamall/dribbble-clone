@@ -55,7 +55,7 @@ const Project = async ({ params: { id } }: { params: { id: string } }) => {
               </Link>
 
               <div className="flex-1 flexStart flex-col gap-1">
-                <p className="self-start text-lg font-semibold">
+                <p className="self-start text-lg capitalize font-semibold">
                   {project?.title}
                 </p>
                 <div className="flex  w-full gap-2 flex-col">
