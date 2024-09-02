@@ -14,7 +14,7 @@ const Home = async ({
   const { projects, isLoading } = await fetchProjects({ searchQuery: q });
   return (
     <>
-      <SearchBar />
+      <SearchBar q={q}/>
       <ProjectsContent loading={isLoading} data={projects} />
     </>
   );

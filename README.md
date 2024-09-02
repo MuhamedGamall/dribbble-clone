@@ -8,8 +8,9 @@ A fullstack Dribbble clone built with Next.js, React, Shadcn-UI, Tailwind, NextA
 * 📊 backend and database powered by MongoDb
 * 🖼️ Upload images using Cloudinary
 * 📝 Create, edit and delete Projects
+* 🔍 Search and category functionalities 
 * ✨ Responsive UI Tailwind and shadcn/ui
-* 👍🏻 Likes and Views Functionality
+* 👍🏻 Likes and Views functionalities
 
 ## Getting Started
 
