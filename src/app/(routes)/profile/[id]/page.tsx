@@ -68,7 +68,10 @@ const UserProfile = async ({ params }: Props) => {
                       width={5}
                       height={5}
                       alt="dot"
+                      className="xs:block hidden"
                     />
+<div className="xs:block hidden">
+
                     <ToggleFollowButton userId={params?.id}>
                       {session?.user?.following?.includes(params?.id) ? (
                         <button className="text-red-500">Unfollow</button>
@@ -76,7 +79,8 @@ const UserProfile = async ({ params }: Props) => {
                         <button className="text-green-600">Follow</button>
                       )}
                     </ToggleFollowButton>
-                  </>
+                 </div >
+</>
                 )}
               </div>
               {(user?.githubUrl || user?.linkedinUrl || user?.websiteUrl) && (
@@ -148,6 +152,8 @@ const UserProfile = async ({ params }: Props) => {
 
                 {session?.user?._id !== params?.id && (
                   <>
+                    <div className="xs:hidden block">
+                    
                     <ToggleFollowButton userId={params?.id}>
                       <Button className="gap-1 items-center hover:bg-slate-200   bg-light-white-400 !w-max text-black-100">
                         {session?.user?.following?.includes(params?.id) ? (
@@ -160,6 +166,7 @@ const UserProfile = async ({ params }: Props) => {
                         )}
                       </Button>
                     </ToggleFollowButton>
+                      </div >
                     <Link href={`mailto:${user?.email}`}>
                       <Button className="bg-primary-purple gap-1 items-center hover:opacity-[0.7]">
                         <Image
