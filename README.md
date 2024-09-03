@@ -12,6 +12,8 @@ A fullstack Dribbble clone built with Next.js, React, TypeScript, Shadcn-UI, Tai
 * 🔍 Search and category functionalities 
 * ✨ Responsive UI Tailwind and shadcn/ui
 * 👍🏻 Likes and Views functionalities
+* ⭐ Users can mark projects as favorites for quick access.
+* 👥 Follow other users and see their updates on a dedicated following page.
 
 ## Search Page
 <img src="https://github.com/MuhamedGamall/dribbble-clone/blob/master/public/one.png" width="400px" />
